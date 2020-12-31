@@ -1,0 +1,22 @@
+{
+  "name": "cookie-bar-package-json",
+  "description": "Base package json",
+  "scripts": {
+    "start-js": "react-scripts start",
+    "start": "npm-run-all -p watch-css start-js",
+    "build": "npm run build-css && react-scripts build",
+    "build-css": "node-sass-chokidar client/src/sass/ -o client/dist/css/",
+    "watch-css": "npm run build-css && node-sass-chokidar client/src/sass/ -o client/dist/css/ --watch --recursive"
+  },
+  "author": "restruct",
+  "license": "ISC",
+  "dependencies": {
+    "chokidar": "^3.4.3"
+  },
+  "version": "1.0.0",
+  "main": "main.js",
+  "keywords": [],
+  "devDependencies": {
+    "node-sass-chokidar": "^1.5.0"
+  }
+}

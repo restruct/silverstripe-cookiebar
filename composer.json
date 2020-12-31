@@ -1,0 +1,28 @@
+{
+  "name": "restruct/silverstripe-cookiebar",
+  "description": "Drop-in configurable notice about cookies",
+  "type": "silverstripe-module",
+  "keywords": [
+    "silverstripe",
+    "cookies"
+  ],
+  "authors": [
+    {
+      "name": "restruct"
+    }
+  ],
+  "require": {
+    "silverstripe/framework": "^4.4"
+  },
+  "extra": {
+    "expose": [
+      "client/dist/css"
+    ],
+    "installer-name": "cookie-bar"
+  },
+  "autoload": {
+    "psr-4": {
+      "Restruct\\CookieBar\\": "src/"
+    }
+  }
+}

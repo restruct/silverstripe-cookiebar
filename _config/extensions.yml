@@ -1,0 +1,7 @@
+PageController:
+  extensions:
+    - Restruct\CookieBar\Extensions\PageControllerExtension
+
+SilverStripe\SiteConfig\SiteConfig:
+  extensions:
+    - Restruct\CookieBar\Extensions\SiteConfigExtension
