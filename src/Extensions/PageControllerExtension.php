@@ -22,7 +22,7 @@ namespace Restruct\CookieBar\Extensions {
         public function onAfterInit()
         {
             if ( self::isCookieBarEnable() ) {
-                Requirements::css('restruct-apps/silverstripe-cookiebar:client/dist/css/cookiebar.css');
+                Requirements::css('restruct/silverstripe-cookiebar:client/dist/css/cookiebar.css');
             }
         }
 
