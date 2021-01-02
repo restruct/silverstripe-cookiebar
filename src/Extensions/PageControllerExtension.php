@@ -39,17 +39,17 @@ namespace Restruct\CookieBar\Extensions {
 				// check if we should show
 				if(document.cookie.indexOf('" . CookieBarController::getCookieName() . "=true')==-1){
 					//jQuery('#cookiebar').show();
-					jQuery('body').prepend(jQuery('#cookiebar'));
+					$('body').prepend($('#cookiebar'));
 				}
 				
 				// accept action
-				jQuery('#acceptcookies').click(function(e){
+				$('#acceptcookies').click(function(e){
 					e.preventDefault();
-					jQuery.ajax({
+					$.ajax({
 						url: '" . CookieBarController::find_link('accept') . "',
 						success: function(data, textStatus) {
 							if(data === 'success') {
-								jQuery('#cookiebar').slideUp(500);
+								$('#cookiebar').slideUp(500);
 							}
 						}
 					});				
