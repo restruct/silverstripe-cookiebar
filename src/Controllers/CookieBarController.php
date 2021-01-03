@@ -31,7 +31,6 @@ namespace Restruct\CookieBar\Controls {
             return "cookiebar/$action";
         }
 
-
         public function accept()
         {
             if ( !Cookie::get(self::getCookieName()) ) {

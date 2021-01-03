@@ -17,13 +17,13 @@
 			</div>
 			<div class="links">
 				<a id="acceptcookies" href="$Top.AcceptCookiesLink">
-					<i class="glyphicon glyphicon-ok">
-						<span class="icon-fallback">✔</span></i> $CookieCloseText
+					<i class="far fa-check"></i>
+					{$CookieCloseText}
 				</a>
-				<% if CookiePage %>
+				<% if $CookiePage %>
 					<a href="$CookiePage.Link" class="infolink">
-						<i class="glyphicon glyphicon-info-sign">
-						<span class="icon-fallback">ℹ</span></i> $CookieMoreText
+					<i class="far fa-info-circle"></i>
+						 $CookieMoreText
 					</a>
 				<% end_if %>
 			</div>
