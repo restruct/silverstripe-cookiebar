@@ -33,15 +33,14 @@ namespace Restruct\CookieBar\Controls {
 
         public function accept()
         {
-            if ( !Cookie::get(self::getCookieName()) ) {
+            if ( !self::isCookieAccepted() ) {
                 //$name, $value, $expiry = 90, $path = null, $domain = null, $secure = false, $httpOnly = false
                 Cookie::set(self::getCookieName(), 'true', self::getCookieAge(), null, null, null, false);
             }
 
             if ( Director::is_ajax() ) {
-                echo 'success';
+                return 'success';
 
-                return true;
             }
 
             return $this->redirectBack();
@@ -52,9 +51,8 @@ namespace Restruct\CookieBar\Controls {
          */
         public static function isCookieAccepted(): bool
         {
-            $cookie = Cookie::get(self::getCookieName());
+            return Cookie::get(self::getCookieName());
 
-            return false;
         }
 
 
