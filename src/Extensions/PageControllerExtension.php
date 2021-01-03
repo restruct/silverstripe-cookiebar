@@ -32,19 +32,19 @@ namespace Restruct\CookieBar\Extensions {
 					$('body').prepend($('#cookiebar'));
 				}
 				
-				// accept action
 				$(document).on('click','#acceptcookies',function(e){
-					e.preventDefault();
-					$.ajax({
-						url: '" . CookieBarController::find_link('accept') . "',
-						success: function(data, textStatus) {
-							if(data === 'success') {
-								$('#cookiebar').slideUp(500);
-							}
-						}
-					});				
+                    e.preventDefault();
+                    let t = $(this), link = t.attr('href');
+                    $.ajax({
+                        url: link,
+                        success: function(_) {
+                            if(_ === 'success') {
+                                $('#cookiebar').slideUp(500);
+                            }
+                        }
+                    });       
+                });
 
-				});
 				
 		", "cookiebar-script");
 
