@@ -1,6 +1,8 @@
 #cookiebar {
   border-top: 2px solid #999;
   border-bottom: 2px solid #999;
+  display: inline-block;
+  width: 100%;
   background-color: #eeeeee;
   background-image: -webkit-linear-gradient(top, #eeeeee, #ffffff);
   background-image: -moz-linear-gradient(top, #eeeeee, #ffffff);
