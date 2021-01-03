@@ -23,16 +23,6 @@ namespace Restruct\CookieBar\Extensions {
         {
             if ( self::isCookieBarEnable() ) {
                 Requirements::css('restruct/silverstripe-cookiebar:client/dist/css/cookiebar.css');
-            }
-        }
-
-        /**
-         * insert javascript into the requirements & output the cookiebar markup
-         */
-        public function CookieBar()
-        {
-            if ( self::isCookieBarEnable() ) {
-                $isCookieAccepted = CookieBarController::isCookieAccepted();
 
                 Requirements::customScript("
 
@@ -43,7 +33,7 @@ namespace Restruct\CookieBar\Extensions {
 				}
 				
 				// accept action
-				$('#acceptcookies').click(function(e){
+				$(document).on('click','#acceptcookies',function(e){
 					e.preventDefault();
 					$.ajax({
 						url: '" . CookieBarController::find_link('accept') . "',
@@ -58,13 +48,24 @@ namespace Restruct\CookieBar\Extensions {
 				
 		", "cookiebar-script");
 
+            }
+        }
+
+        /**
+         * insert javascript into the requirements & output the cookiebar markup
+         */
+        public function CookieBar()
+        {
+            if ( self::isCookieBarEnable() ) {
+                //$isCookieAccepted = CookieBarController::isCookieAccepted();
+
                 return $this->owner->renderWith('Restruct\\CookieBar\\CookieBar');
             }
         }
 
         public function getAcceptCookiesLink()
         {
-            return CookieBarController::find_link('/accept');
+            return CookieBarController::find_link('accept');
         }
     }
 }
