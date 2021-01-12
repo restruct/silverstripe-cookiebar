@@ -51,7 +51,9 @@ namespace Restruct\CookieBar\Controls {
          */
         public static function isCookieAccepted(): bool
         {
-            return Cookie::get(self::getCookieName());
+            $cookie = Cookie::get(self::getCookieName());
+
+            return null !== $cookie;
 
         }
 
