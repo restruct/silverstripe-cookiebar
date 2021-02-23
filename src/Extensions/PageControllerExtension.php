@@ -23,30 +23,7 @@ namespace Restruct\CookieBar\Extensions {
         {
             if ( self::isCookieBarEnable() ) {
                 Requirements::css('restruct/silverstripe-cookiebar:client/dist/css/cookiebar.css');
-
-                Requirements::customScript("
-
-				// check if we should show
-				if(document.cookie.indexOf('" . CookieBarController::getCookieName() . "=true')==-1){
-					//jQuery('#cookiebar').show();
-					$('body').prepend($('#cookiebar'));
-				}
-				
-				$(document).on('click','#acceptcookies',function(e){
-                    e.preventDefault();
-                    let t = $(this), link = t.attr('href');
-                    $.ajax({
-                        url: link,
-                        success: function(_) {
-                            if(_ === 'success') {
-                                $('#cookiebar').slideUp(500);
-                            }
-                        }
-                    });       
-                });
-
-				
-		", "cookiebar-script");
+                Requirements::javascript('restruct/silverstripe-cookiebar:client/dist/js/CookieBar.js');
 
             }
         }
