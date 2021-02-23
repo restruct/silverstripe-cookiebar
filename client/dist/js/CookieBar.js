@@ -35,9 +35,11 @@ let CookieBar = function () {
             });
         },
         set: function () {
-            let exdate = new Date();
-            exdate.setDate(exdate.getDate() + exdays);
-            document.cookie = GetKey() + '=1;SameSite=Strict; expires=' + exdate.toUTCString();
+
+            let now = new Date();
+            now.setFullYear( now.getFullYear() + 1 );
+            document.cookie = GetKey() + '=1;SameSite=Strict; expires=' + now.toUTCString();
+
         },
         get: function () {
             let keyValue = document.cookie.match('(^|;) ?' + GetKey() + '=([^;]*)(;|$)');
