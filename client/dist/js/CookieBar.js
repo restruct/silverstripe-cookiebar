@@ -38,7 +38,7 @@ let CookieBar = function () {
 
             let now = new Date();
             now.setFullYear( now.getFullYear() + 1 );
-            document.cookie = GetKey() + '=1;SameSite=Strict; expires=' + now.toUTCString();
+            document.cookie = GetKey() + '=1;path=/;SameSite=Strict;expires=' + now.toUTCString();
 
         },
         get: function () {
