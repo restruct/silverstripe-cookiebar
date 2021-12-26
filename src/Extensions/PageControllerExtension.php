@@ -45,7 +45,7 @@ namespace Restruct\CookieBar\Extensions {
             return CookieBarController::find_link('accept');
         }
 
-        public function isCookieAccepted()
+        public function CookieConsent()
         {
             return CookieBarController::isCookieAccepted();
         }
