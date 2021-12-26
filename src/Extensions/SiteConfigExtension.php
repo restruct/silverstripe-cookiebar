@@ -52,7 +52,7 @@ namespace Restruct\CookieBar\Extensions {
             ]);
         }
 
-        public function isCookieAccepted()
+        public function CookieConsent()
         {
             return CookieBarController::isCookieAccepted();
         }
