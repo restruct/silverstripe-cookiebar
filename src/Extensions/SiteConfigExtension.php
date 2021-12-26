@@ -2,6 +2,7 @@
 
 namespace Restruct\CookieBar\Extensions {
 
+    use Restruct\CookieBar\Controls\CookieBarController;
     use SilverStripe\AssetAdmin\Forms\UploadField;
     use SilverStripe\Assets\Image;
     use SilverStripe\CMS\Model\SiteTree;
@@ -49,8 +50,11 @@ namespace Restruct\CookieBar\Extensions {
                 HTMLEditorField::create('CookieBarContent', 'Cookie bar Content (hidden on mobile)')->setRows(5),
                 $imageField,
             ]);
+        }
 
-
+        public function isCookieAccepted()
+        {
+            return CookieBarController::isCookieAccepted();
         }
     }
 }

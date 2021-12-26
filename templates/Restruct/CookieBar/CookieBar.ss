@@ -16,7 +16,7 @@
 				</div>
 			</div>
 			<div class="links">
-				<a id="acceptcookies" href="$Top.AcceptCookiesLink">
+				<a data-purpose="acceptcookies" id="acceptcookies" href="$Top.AcceptCookiesLink">
 					<i class="far fa-check"></i>
 					{$CookieCloseText}
 				</a>

@@ -13,7 +13,7 @@ $(document).ready(function () {
     if (typeof (keyValue) === 'undefined' || null === keyValue) {
         $('body').prepend($('#cookiebar'));
     }
-    $(document).on('click', '#acceptcookies', function (e) {
+    $(document).on('click', '#acceptcookies, a[data-purpose="acceptcookies"]', function (e) {
         e.preventDefault();
         Cookies.set(key, 'true', {expires: expDays, path: '/'})
         let keyValue = Cookies.get(key);
