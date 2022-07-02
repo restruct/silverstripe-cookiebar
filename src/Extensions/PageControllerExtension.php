@@ -23,6 +23,7 @@ namespace Restruct\CookieBar\Extensions {
         {
             if ( self::isCookieBarEnable() ) {
                 Requirements::css('restruct/silverstripe-cookiebar:client/dist/css/cookiebar.css');
+//                Requirements::css('restruct/silverstripe-cookiebar:client/dist/css/cookiebar-layout-sans-bs.css'); // non-bootstrap fallback layout
                 Requirements::javascript('restruct/silverstripe-cookiebar:client/dist/js/CookieBar.js');
 
             }

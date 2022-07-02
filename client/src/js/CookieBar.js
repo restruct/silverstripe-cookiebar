@@ -4,20 +4,34 @@ import Cookies from 'js-cookie'
  *
  * @type {string}
  */
-const key = 'Restruct_CookiesAccepted';
+const cookieAcceptKey = 'Restruct_CookiesAccepted';
+const cookieAcceptExpireDays = 365;
+let cookiesAccepted = Cookies.get(cookieAcceptKey);
 
-const expDays = 365;
+document.addEventListener("DOMContentLoaded", function(event) {
 
-$(document).ready(function () {
-    let keyValue = Cookies.get(key);
-    if (typeof (keyValue) === 'undefined' || null === keyValue) {
-        $('body').prepend($('#cookiebar'));
-    }
-    $(document).on('click', '#acceptcookies, a[data-purpose="acceptcookies"]', function (e) {
-        e.preventDefault();
-        Cookies.set(key, 'true', {expires: expDays, path: '/'})
-        let keyValue = Cookies.get(key);
+  // insert cookiebar into body (fallback to legacy #cookiebarholder in case of overridden template)
+  let cookieAcceptTemplate = document.getElementById('cookiebar-template');
+  if(!cookieAcceptTemplate) cookieAcceptTemplate = document.querySelector('#cookiebarholder');
+  if (typeof (cookiesAccepted) === 'undefined' || null === cookiesAccepted) {
+    document.querySelector('body')
+      // https://developer.mozilla.org/en-US/docs/Web/API/Element/insertAdjacentHTML
+      .insertAdjacentHTML('afterbegin', cookieAcceptTemplate.innerHTML);
+  }
 
-        $('#cookiebar').fadeOut();
+  // process cookie accept
+  document.getElementById('acceptcookies')
+    .addEventListener('click', function(event) {
+      event.preventDefault();
+      Cookies.set(cookieAcceptKey, 'true', {expires: cookieAcceptExpireDays, path: '/'});
+      cookiesAccepted = Cookies.get(cookieAcceptKey);
+      fadeOut(document.getElementById('cookiebar'), 400);
     });
+
+  // jQuery fadeOut equivalent https://plainjs.com/javascript/effects/animate-an-element-property-44/
+  function fadeOut(el, duration) {
+    var s = el.style, step = 25/(duration || 300);
+    s.opacity = s.opacity || 1;
+    (function fade() { (s.opacity -= step) < 0 ? s.display = "none" : setTimeout(fade, 25); })();
+  }
 });

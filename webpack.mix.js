@@ -6,5 +6,6 @@ mix.options({
 });
 
 mix.setPublicPath('client/dist');
-mix.sass('client/src/sass/cookiebar.scss', 'client/dist/css/');
 mix.js(['client/src/js/CookieBar.js'], 'client/dist/js/');
+mix.sass('client/src/sass/cookiebar.scss', 'client/dist/css/');
+mix.sass('client/src/sass/cookiebar-layout-sans-bs.scss', 'client/dist/css/');

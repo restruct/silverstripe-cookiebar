@@ -2,7 +2,7 @@
   "name": "restruct/silverstripe-cookiebar",
   "description": "Drop-in configurable notice about cookies",
   "type": "silverstripe-vendormodule",
-  "license": "BSD-3-Clause",
+  "license": "MIT",
   "keywords": [
     "silverstripe",
     "cookies"
