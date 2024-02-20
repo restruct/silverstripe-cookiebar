@@ -9,6 +9,7 @@ namespace Restruct\CookieBar\Extensions {
     use SilverStripe\Forms\CheckboxField;
     use SilverStripe\Forms\FieldList;
     use SilverStripe\Forms\HTMLEditor\HTMLEditorField;
+    use SilverStripe\Forms\TextareaField;
     use SilverStripe\Forms\TextField;
     use SilverStripe\Forms\TreeDropdownField;
     use SilverStripe\ORM\DataExtension;
@@ -21,6 +22,7 @@ namespace Restruct\CookieBar\Extensions {
             'CookieCloseText'  => 'Varchar(100)',
             'CookieMoreText'   => 'Varchar(150)',
             'CookieBarEnable'  => 'Boolean',
+            'CookieBarRunOnConsent' => 'Text',
         ];
 
         private static $has_one = [
@@ -49,6 +51,8 @@ namespace Restruct\CookieBar\Extensions {
                 TreeDropdownField::create('CookiePageID', 'Cookie Information Page', SiteTree::class),
                 HTMLEditorField::create('CookieBarContent', 'Cookie bar Content (hidden on mobile)')->setRows(5),
                 $imageField,
+                TextareaField::create('CookieBarRunOnConsent', 'Optional RAW JS code to run on consent')
+                    ->setDescription('This code gets wrapped in function cookieBarRunOnConsent, which runs when a visitor clicks the ‘accept cookies’ button.<br>Please make sure to enter valid javascript only (any HTML tags get filtered out as a basic safety precaution).'),
             ]);
         }
 

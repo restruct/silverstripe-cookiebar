@@ -26,6 +26,13 @@ document.addEventListener("DOMContentLoaded", function(event) {
       Cookies.set(cookieAcceptKey, 'true', {expires: cookieAcceptExpireDays, path: '/'});
       cookiesAccepted = Cookies.get(cookieAcceptKey);
       fadeOut(document.getElementById('cookiebar'), 400);
+
+      // Run optional 'SiteConfig.CookieBarRunOnConsent' script/code
+      if (typeof cookieBarRunOnConsent === 'function') {
+          cookieBarRunOnConsent();
+      } else {
+          console.log('CookieBar: no cookieBarRunOnConsent code defined (optional so OK)...')
+      }
     });
 
   // jQuery fadeOut equivalent https://plainjs.com/javascript/effects/animate-an-element-property-44/

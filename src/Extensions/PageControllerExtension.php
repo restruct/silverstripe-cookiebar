@@ -4,6 +4,7 @@ namespace Restruct\CookieBar\Extensions {
 
     use Restruct\CookieBar\Controls\CookieBarController;
     use SilverStripe\Control\Director;
+    use SilverStripe\Core\Convert;
     use SilverStripe\Core\Extension;
     use SilverStripe\SiteConfig\SiteConfig;
     use SilverStripe\View\Requirements;
@@ -26,6 +27,13 @@ namespace Restruct\CookieBar\Extensions {
 //                Requirements::css('restruct/silverstripe-cookiebar:client/dist/css/cookiebar-layout-sans-bs.css'); // non-bootstrap fallback layout
                 Requirements::javascript('restruct/silverstripe-cookiebar:client/dist/js/CookieBar.js');
 
+                // Inject optional JS code to run on consent
+                if($jsToRun = SiteConfig::current_site_config()->CookieBarRunOnConsent){
+                    $jsToRun = strip_tags($jsToRun); // just to be sure no <html> gets included...
+                    Requirements::customScript("function cookieBarRunOnConsent() {
+                        $jsToRun
+                    }", 'cookiebar_run_on_consent');
+                }
             }
         }
 
