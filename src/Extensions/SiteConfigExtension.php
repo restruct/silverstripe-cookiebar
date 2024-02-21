@@ -67,7 +67,7 @@ namespace Restruct\CookieBar\Extensions {
                 HTMLEditorField::create('CookieBarContent', 'Cookie bar Content (hidden on mobile)')->setRows(5),
                 $imageField,
                 TextareaField::create('CookieBarRunOnInit', 'Optional RAW JS code to run on page initialisation (before any other scripts)')
-                    ->setDescription('Javascript to always run on initialization/loading of page, eg for setting default consent mode and update it on consent (see placeholder content).<br>Please make sure to enter valid javascript only (any HTML tags get filtered out as a basic safety precaution).')
+                    ->setDescription('Javascript to always run on initialization/loading of page, eg for setting default consent mode and update it on consent (see placeholder content).<br>Please make sure to enter valid javascript only (any HTML tags get filtered out as a basic safety precaution).<br>NOTE: requires your templates to call $MetaTags() to include this script, alternatively you may place the script manually by adding $SiteConfig.CookieBarRunOnInitScript in the head section.')
                     ->setAttribute('placeholder', "window.dataLayer = window.dataLayer || [];
 function gtag() { window.dataLayer.push(arguments); }
 
