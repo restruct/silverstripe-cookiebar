@@ -13,6 +13,8 @@ namespace Restruct\CookieBar\Extensions {
     use SilverStripe\Forms\TextField;
     use SilverStripe\Forms\TreeDropdownField;
     use SilverStripe\ORM\DataExtension;
+    use SilverStripe\ORM\FieldType\DBHTMLVarchar;
+    use SilverStripe\SiteConfig\SiteConfig;
 
     class SiteConfigExtension extends DataExtension
     {
@@ -91,6 +93,19 @@ gtag('consent', 'default', {
         public function CookieConsent()
         {
             return CookieBarController::isCookieAccepted();
+        }
+
+        /**
+         * Wrap CookieBarRunOnInit script into <script> tag (if any)
+         * @return DBHTMLVarchar|void
+         */
+        public function CookieBarRunOnInitScript()
+        {
+            if($jsToRunOnInit = SiteConfig::current_site_config()->CookieBarRunOnInit){
+                $jsToRunOnInit = strip_tags($jsToRunOnInit); // just to be sure no <html> gets included...
+
+                return DBHTMLVarchar::create()->setValue("<script>$jsToRunOnInit</script>");
+            }
         }
     }
 }

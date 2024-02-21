@@ -1,6 +1,10 @@
-PageController:
+SilverStripe\CMS\Model\SiteTree:
   extensions:
-    - Restruct\CookieBar\Extensions\PageControllerExtension
+    - Restruct\CookieBar\Extensions\SiteTreeExtension
+
+SilverStripe\CMS\Controllers\ContentController:
+  extensions:
+    - Restruct\CookieBar\Extensions\ContentControllerExtension
 
 SilverStripe\SiteConfig\SiteConfig:
   extensions:

@@ -10,7 +10,7 @@ namespace Restruct\CookieBar\Extensions {
     use SilverStripe\SiteConfig\SiteConfig;
     use SilverStripe\View\Requirements;
 
-    class PageControllerExtension extends Extension
+    class ContentControllerExtension extends Extension
     {
 
         /**
@@ -19,15 +19,6 @@ namespace Restruct\CookieBar\Extensions {
         public static function isCookieBarEnable(): bool
         {
             return SiteConfig::current_site_config()->CookieBarEnable;
-        }
-
-        public function CookieBarRunOnInitScript()
-        {
-            if($jsToRunOnInit = SiteConfig::current_site_config()->CookieBarRunOnInit){
-                $jsToRunOnInit = strip_tags($jsToRunOnInit); // just to be sure no <html> gets included...
-
-                return DBHTMLVarchar::create()->setValue("<script>$jsToRunOnInit</script>");
-            }
         }
 
         public function onAfterInit()
