@@ -17,6 +17,9 @@ document.addEventListener("DOMContentLoaded", function(event) {
     document.querySelector('body')
       // https://developer.mozilla.org/en-US/docs/Web/API/Element/insertAdjacentHTML
       .insertAdjacentHTML('afterbegin', cookieAcceptTemplate.innerHTML);
+  } else {
+      // Run optional 'SiteConfig.CookieBarRunOnConsent' script/code
+      triggerCookieBarRunOnConsent();
   }
 
   // process cookie accept
@@ -25,15 +28,21 @@ document.addEventListener("DOMContentLoaded", function(event) {
       event.preventDefault();
       Cookies.set(cookieAcceptKey, 'true', {expires: cookieAcceptExpireDays, path: '/'});
       cookiesAccepted = Cookies.get(cookieAcceptKey);
-      fadeOut(document.getElementById('cookiebar'), 400);
 
       // Run optional 'SiteConfig.CookieBarRunOnConsent' script/code
+      triggerCookieBarRunOnConsent();
+
+      fadeOut(document.getElementById('cookiebar'), 400);
+    });
+
+  // Run optional 'SiteConfig.CookieBarRunOnConsent' script/code IF DEFINED
+  function triggerCookieBarRunOnConsent() {
       if (typeof cookieBarRunOnConsent === 'function') {
           cookieBarRunOnConsent();
       } else {
           console.log('CookieBar: no cookieBarRunOnConsent code defined (optional so OK)...')
       }
-    });
+  }
 
   // jQuery fadeOut equivalent https://plainjs.com/javascript/effects/animate-an-element-property-44/
   function fadeOut(el, duration) {
