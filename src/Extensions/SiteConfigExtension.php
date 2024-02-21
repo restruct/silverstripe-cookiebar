@@ -22,6 +22,7 @@ namespace Restruct\CookieBar\Extensions {
             'CookieCloseText'  => 'Varchar(100)',
             'CookieMoreText'   => 'Varchar(150)',
             'CookieBarEnable'  => 'Boolean',
+            'CookieBarRunOnInit' => 'Text',
             'CookieBarRunOnConsent' => 'Text',
         ];
 
@@ -42,6 +43,18 @@ namespace Restruct\CookieBar\Extensions {
             $imageField = UploadField::create('CookieImage', 'Image (optional)');
             $imageField->getValidator()->setAllowedExtensions([ 'jpg', 'jpeg', 'gif', 'png' ]);
 
+            // https://developers.google.com/tag-platform/security/concepts/consent-mode
+            // https://developers.google.com/tag-platform/security/guides/consent?consentmode=advanced#implementation_example
+//            $GoogleConsentModeTypes = [
+//                'analytics_storage' => 'Enables storage, such as cookies (web) or device identifiers (apps), related to analytics, for example, visit duration.',
+//                'ad_storage' => 'Enables storage, such as cookies (web) or device identifiers (apps), related to advertising.',
+//                'ad_user_data' => 'Sets consent for sending user data to Google for online advertising purposes.',
+//                'ad_personalization' => 'Sets consent for personalized advertising.',
+//                'functionality_storage' => 'Enables storage that supports the functionality of the website or app, for example, language settings',
+//                'personalization_storage' => 'Enables storage related to personalization, for example, video recommendations',
+//                'security_storage' => 'Enables storage related to security such as authentication functionality, fraud prevention, and other user protection',
+//            ];
+
             $fields->addFieldsToTab('Root.CookieBar', [
                 CheckboxField::create('CookieBarEnable', 'Enable Cookie Bar'),
 
@@ -51,8 +64,27 @@ namespace Restruct\CookieBar\Extensions {
                 TreeDropdownField::create('CookiePageID', 'Cookie Information Page', SiteTree::class),
                 HTMLEditorField::create('CookieBarContent', 'Cookie bar Content (hidden on mobile)')->setRows(5),
                 $imageField,
+                TextareaField::create('CookieBarRunOnInit', 'Optional RAW JS code to run on page initialisation (before any other scripts)')
+                    ->setDescription('Javascript to always run on initialization/loading of page, eg for setting default consent mode and update it on consent (see placeholder content).<br>Please make sure to enter valid javascript only (any HTML tags get filtered out as a basic safety precaution).')
+                    ->setAttribute('placeholder', "window.dataLayer = window.dataLayer || [];
+function gtag() { window.dataLayer.push(arguments); }
+
+gtag('consent', 'default', {
+  'analytics_storage': 'granted',
+  'ad_storage': 'denied',
+  'ad_user_data': 'denied',
+  'ad_personalization': 'denied',
+});")
+                    ->setRows(8),
                 TextareaField::create('CookieBarRunOnConsent', 'Optional RAW JS code to run on consent')
-                    ->setDescription('This code gets wrapped in function cookieBarRunOnConsent, which runs when a visitor clicks the ‘accept cookies’ button.<br>Please make sure to enter valid javascript only (any HTML tags get filtered out as a basic safety precaution).'),
+                    ->setDescription('This code gets wrapped in function cookieBarRunOnConsent, which runs when a visitor clicks the ‘accept cookies’ button.<br>Please make sure to enter valid javascript only (any HTML tags get filtered out as a basic safety precaution).')
+                    ->setAttribute('placeholder', "gtag('consent', 'update', {
+  'ad_storage': 'granted',
+  'ad_user_data': 'granted',
+  'ad_personalization': 'granted'
+});")
+                    ->setRows(8),
+
             ]);
         }
 
