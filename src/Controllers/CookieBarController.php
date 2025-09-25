@@ -11,10 +11,13 @@ namespace Restruct\CookieBar\Controls {
     {
         const URLSegment = "cookiebar";
 
-        private static $cookie_name = 'Restruct_CookiesAccepted';
+        private static $sans_bs_css = false; // optionally include CSS with column-layout for sites not using Bootstrap
 
+        private static $cookie_name = 'cookie_consent';
 
         private static $cookie_age = 365;
+
+        private static $cookie_refresh = true;
 
         private static $allowed_actions = [
             'accept',
@@ -22,7 +25,6 @@ namespace Restruct\CookieBar\Controls {
 
         public static function find_link($action = false): string
         {
-
             return static::singleton()->Link($action);
         }
 
@@ -31,16 +33,19 @@ namespace Restruct\CookieBar\Controls {
             return "cookiebar/$action";
         }
 
+        /**
+         * This action will only get requested if JS is unsupported (or blocked), else the cookie will get set directly from JS
+         * @return \SilverStripe\Control\HTTPResponse|string
+         */
         public function accept()
         {
             if ( !self::isCookieAccepted() ) {
                 //$name, $value, $expiry = 90, $path = null, $domain = null, $secure = false, $httpOnly = false
-                Cookie::set(self::getCookieName(), 'true', self::getCookieAge(), null, null, null, false);
+                Cookie::set(self::getCookieName(), time(), self::getCookieAge() ?: 365, null, null, null, false);
             }
 
             if ( Director::is_ajax() ) {
                 return 'success';
-
             }
 
             return $this->redirectBack();
@@ -51,9 +56,14 @@ namespace Restruct\CookieBar\Controls {
          */
         public static function isCookieAccepted(): bool
         {
-            $cookie = Cookie::get(self::getCookieName());
+            $cookieVal = Cookie::get(self::getCookieName()) ?: Cookie::get('Restruct_CookiesAccepted'); // fallback to legacy cookie
 
-            return null !== $cookie;
+            // 'Refresh' cookie if required
+            if($cookieVal && self::config()->get('cookie_refresh')) {
+                Cookie::set(self::getCookieName(), $cookieVal, self::getCookieAge(), null, null, null, false);
+            }
+
+            return $cookieVal !== null;
 
         }
 
@@ -63,7 +73,7 @@ namespace Restruct\CookieBar\Controls {
          */
         public static function getCookieName(): string
         {
-            return self::$cookie_name;
+            return self::config()->get('cookie_name');
         }
 
         /**
@@ -71,7 +81,7 @@ namespace Restruct\CookieBar\Controls {
          */
         public static function setCookieName(string $cookie_name): void
         {
-            self::$cookie_name = $cookie_name;
+            self::config()->merge('cookie_name', $cookie_name);
         }
 
 
@@ -80,7 +90,7 @@ namespace Restruct\CookieBar\Controls {
          */
         public static function getCookieAge(): int
         {
-            return self::$cookie_age;
+            return self::config()->get('cookie_age');
         }
 
 
@@ -89,7 +99,7 @@ namespace Restruct\CookieBar\Controls {
          */
         public static function setCookieAge(int $cookie_age): void
         {
-            self::$cookie_age = $cookie_age;
+            self::config()->merge('cookie_age', $cookie_age);
         }
     }
 }

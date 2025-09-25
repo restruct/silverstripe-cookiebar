@@ -78,8 +78,8 @@ gtag('consent', 'default', {
   'ad_personalization': 'denied',
 });")
                     ->setRows(8),
-                TextareaField::create('CookieBarRunOnConsent', 'Optional RAW JS code to run on consent')
-                    ->setDescription('This code gets wrapped in function cookieBarRunOnConsent, which runs when a visitor clicks the ‘accept cookies’ button.<br>Please make sure to enter valid javascript only (any HTML tags get filtered out as a basic safety precaution).')
+                TextareaField::create('CookieBarRunOnConsent', 'Optional RAW JS code to run if/after consent')
+                    ->setDescription('This code gets wrapped in function cookieBarRunIfConsent, which runs only if ‘cookie consent’ has been given.<br>Please make sure to enter valid javascript only (any HTML tags get filtered out as a basic safety precaution).')
                     ->setAttribute('placeholder', "gtag('consent', 'update', {
   'ad_storage': 'granted',
   'ad_user_data': 'granted',

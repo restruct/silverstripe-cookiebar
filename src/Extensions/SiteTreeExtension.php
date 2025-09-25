@@ -14,7 +14,7 @@ extends DataExtension
     {
         $SiteConf = SiteConfig::current_site_config();
         if (!$SiteConf) {
-            $tags .= "\n<!-- Restruct\CookieBar\Extensions\SiteTreeExtension: no current SiteConfig found... -->";
+            $tags .= "\n<!-- " . __CLASS__ . ": no current SiteConfig found... -->";
             return;
         }
         /** @var DBHTMLVarchar $jsRunOnInitScriptTag */
