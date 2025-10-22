@@ -3,13 +3,13 @@
 namespace Restruct\CookieBar\Extensions {
 
     use Restruct\CookieBar\Controls\CookieBarController;
-    use SilverStripe\Control\Director;
-    use SilverStripe\Core\Convert;
     use SilverStripe\Core\Extension;
-    use SilverStripe\ORM\FieldType\DBHTMLVarchar;
     use SilverStripe\SiteConfig\SiteConfig;
     use SilverStripe\View\Requirements;
 
+    /**
+     * ContentController extension to include CookieBar assets and markup
+     */
     class ContentControllerExtension extends Extension
     {
 
@@ -21,10 +21,13 @@ namespace Restruct\CookieBar\Extensions {
             return SiteConfig::current_site_config()->CookieBarEnable;
         }
 
+        /**
+         * @return void
+         */
         public function onAfterInit()
         {
-            if ( self::cookieBarEnabled() && !self::CookieConsent() ) {
-                if(CookieBarController::config()->get('sans_bs_css')) {
+            if (self::cookieBarEnabled() && !self::CookieConsent()) {
+                if (CookieBarController::config()->get('sans_bs_css')) {
                     Requirements::css('restruct/silverstripe-cookiebar:client/dist/css/cookiebar-layout-sans-bs.css'); // non-bootstrap fallback layout (columns)
                 } else {
                     Requirements::css('restruct/silverstripe-cookiebar:client/dist/css/cookiebar.css');
@@ -32,12 +35,12 @@ namespace Restruct\CookieBar\Extensions {
 //                Requirements::javascript('restruct/silverstripe-cookiebar:client/dist/js/CookieBar.js');
                 Requirements::javascriptTemplate('restruct/silverstripe-cookiebar:client/dist/js/CookieBar.js',
                     [
-                        'ConsentCookieKey' => CookieBarController::getCookieName(),
+                        'ConsentCookieKey'  => CookieBarController::getCookieName(),
                         'ConsentExpiration' => CookieBarController::getCookieAge(),
                     ]);
 
                 // Inject optional JS code to run if/after consent
-                if($jsToRunIfConsent = SiteConfig::current_site_config()->CookieBarRunOnConsent){
+                if ($jsToRunIfConsent = SiteConfig::current_site_config()->CookieBarRunOnConsent) {
                     $jsToRunIfConsent = strip_tags($jsToRunIfConsent); // just to be sure no <html> gets included...
                     Requirements::customScript("function cookieBarRunIfConsent() {
                         $jsToRunIfConsent
@@ -51,17 +54,23 @@ namespace Restruct\CookieBar\Extensions {
          */
         public function CookieBar()
         {
-            if ( self::cookieBarEnabled() ) {
+            if (self::cookieBarEnabled()) {
                 return $this->owner->renderWith('Restruct\\CookieBar\\CookieBar');
             }
         }
 
-        public function getAcceptCookiesLink()
+        /**
+         * @return string
+         */
+        public function getAcceptCookiesLink() : string
         {
             return CookieBarController::find_link('accept');
         }
 
-        public function CookieConsent()
+        /**
+         * @return bool
+         */
+        public function CookieConsent() : bool
         {
             return CookieBarController::isCookieAccepted();
         }

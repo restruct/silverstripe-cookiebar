@@ -2,14 +2,20 @@
 
 namespace Restruct\CookieBar\Extensions;
 
-use SilverStripe\ORM\DataExtension;
+use SilverStripe\Core\Extension;
 use SilverStripe\ORM\FieldType\DBHTMLVarchar;
 use SilverStripe\SiteConfig\SiteConfig;
 
-class SiteTreeExtension
-extends DataExtension
+/**
+ * Class SiteTreeExtension to inject CookieBarRunOnInit JS code into MetaTags
+ */
+class SiteTreeExtension extends Extension
 {
     // Hook into MetaTags to inject CookieBarRunOnInit JS code before any other
+    /**
+     * @param $tags
+     * @return void
+     */
     public function MetaTags(&$tags)
     {
         $SiteConf = SiteConfig::current_site_config();

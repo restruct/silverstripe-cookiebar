@@ -6,18 +6,24 @@ namespace Restruct\CookieBar\Extensions {
     use SilverStripe\AssetAdmin\Forms\UploadField;
     use SilverStripe\Assets\Image;
     use SilverStripe\CMS\Model\SiteTree;
+    use SilverStripe\Core\Extension;
     use SilverStripe\Forms\CheckboxField;
     use SilverStripe\Forms\FieldList;
     use SilverStripe\Forms\HTMLEditor\HTMLEditorField;
     use SilverStripe\Forms\TextareaField;
     use SilverStripe\Forms\TextField;
     use SilverStripe\Forms\TreeDropdownField;
-    use SilverStripe\ORM\DataExtension;
     use SilverStripe\ORM\FieldType\DBHTMLVarchar;
     use SilverStripe\SiteConfig\SiteConfig;
 
-    class SiteConfigExtension extends DataExtension
+    /**
+     * Class SiteConfigExtension
+     */
+    class SiteConfigExtension extends Extension
     {
+        /**
+         * @var array
+         */
         private static $db = [
             'CookieBarTitle'   => 'Varchar(255)',
             'CookieBarContent' => 'HTMLText',
@@ -28,17 +34,27 @@ namespace Restruct\CookieBar\Extensions {
             'CookieBarRunOnConsent' => 'Text',
         ];
 
+        /**
+         * @var array
+         */
         private static $has_one = [
             'CookiePage'  => SiteTree::class,
             'CookieImage' => Image::class,
         ];
 
+        /**
+         * @var array
+         */
         private static $defaults = [
             'CookieCloseText'  => 'Accept',
             'CookieMoreText'   => 'Read more about Cookies',
             'CookieBarContent' => '<p><strong>Like most websites we uses cookies</strong>. In order to deliver a personalised, responsive service and to improve the site, we remember and store information about how you use it. This is done using simple text files called cookies which sit on your computer. These cookies are completely safe and secure and will never contain any sensitive information. They are used only by us.</p>',
         ];
 
+        /**
+         * @param FieldList $fields
+         * @return void
+         */
         public function updateCMSFields(FieldList $fields)
         {
 
@@ -90,7 +106,10 @@ gtag('consent', 'default', {
             ]);
         }
 
-        public function CookieConsent()
+        /**
+         * @return bool
+         */
+        public function CookieConsent() : bool
         {
             return CookieBarController::isCookieAccepted();
         }

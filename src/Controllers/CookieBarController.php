@@ -5,29 +5,58 @@ namespace Restruct\CookieBar\Controls {
     use PageController;
     use SilverStripe\Control\Cookie;
     use SilverStripe\Control\Director;
-    use SilverStripe\Dev\Debug;
 
+    /**
+     * Class CookieBarController to handle cookie consent actions
+     */
     class CookieBarController extends PageController
     {
+        /**
+         * @var string
+         * URL segment for this controller
+         */
         const URLSegment = "cookiebar";
 
+        /**
+         * @var bool
+         */
         private static $sans_bs_css = false; // optionally include CSS with column-layout for sites not using Bootstrap
 
+        /**
+         * @var string
+         */
         private static $cookie_name = 'cookie_consent';
 
+        /**
+         * @var int
+         */
         private static $cookie_age = 365;
 
+        /**
+         * @var bool
+         */
         private static $cookie_refresh = true;
 
+        /**
+         * @var array
+         */
         private static $allowed_actions = [
             'accept',
         ];
 
+        /**
+         * @param $action
+         * @return string
+         */
         public static function find_link($action = false): string
         {
             return static::singleton()->Link($action);
         }
 
+        /**
+         * @param $action
+         * @return string
+         */
         public function Link($action = null)
         {
             return "cookiebar/$action";
