@@ -20,9 +20,10 @@ class SiteTreeExtension extends Extension
     {
         $SiteConf = SiteConfig::current_site_config();
         if (!$SiteConf) {
-            $tags .= "\n<!-- " . __CLASS__ . ": no current SiteConfig found... -->";
+            $tags .= "\n<!-- " . self::class . ": no current SiteConfig found... -->";
             return;
         }
+
         /** @var DBHTMLVarchar $jsRunOnInitScriptTag */
         if($jsRunOnInitScriptTag = $SiteConf->CookieBarRunOnInitScript()){
             $tags .= "\n" . $jsRunOnInitScriptTag->forTemplate();

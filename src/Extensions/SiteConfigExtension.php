@@ -52,7 +52,6 @@ namespace Restruct\CookieBar\Extensions {
         ];
 
         /**
-         * @param FieldList $fields
          * @return void
          */
         public function updateCMSFields(FieldList $fields)
@@ -106,9 +105,6 @@ gtag('consent', 'default', {
             ]);
         }
 
-        /**
-         * @return bool
-         */
         public function CookieConsent() : bool
         {
             return CookieBarController::isCookieAccepted();
@@ -116,15 +112,17 @@ gtag('consent', 'default', {
 
         /**
          * Wrap CookieBarRunOnInit script into <script> tag (if any)
-         * @return DBHTMLVarchar|void
+         * @return DBHTMLVarchar|null
          */
         public function CookieBarRunOnInitScript()
         {
             if($jsToRunOnInit = SiteConfig::current_site_config()->CookieBarRunOnInit){
                 $jsToRunOnInit = strip_tags($jsToRunOnInit); // just to be sure no <html> gets included...
 
-                return DBHTMLVarchar::create()->setValue("<script>$jsToRunOnInit</script>");
+                return DBHTMLVarchar::create()->setValue(sprintf('<script>%s</script>', $jsToRunOnInit));
             }
+
+            return null;
         }
     }
 }

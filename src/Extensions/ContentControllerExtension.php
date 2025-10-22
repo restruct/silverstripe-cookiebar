@@ -13,9 +13,6 @@ namespace Restruct\CookieBar\Extensions {
     class ContentControllerExtension extends Extension
     {
 
-        /**
-         * @return bool
-         */
         public static function cookieBarEnabled(): bool
         {
             return SiteConfig::current_site_config()->CookieBarEnable;
@@ -32,6 +29,7 @@ namespace Restruct\CookieBar\Extensions {
                 } else {
                     Requirements::css('restruct/silverstripe-cookiebar:client/dist/css/cookiebar.css');
                 }
+
 //                Requirements::javascript('restruct/silverstripe-cookiebar:client/dist/js/CookieBar.js');
                 Requirements::javascriptTemplate('restruct/silverstripe-cookiebar:client/dist/js/CookieBar.js',
                     [
@@ -43,7 +41,7 @@ namespace Restruct\CookieBar\Extensions {
                 if ($jsToRunIfConsent = SiteConfig::current_site_config()->CookieBarRunOnConsent) {
                     $jsToRunIfConsent = strip_tags($jsToRunIfConsent); // just to be sure no <html> gets included...
                     Requirements::customScript("function cookieBarRunIfConsent() {
-                        $jsToRunIfConsent
+                        {$jsToRunIfConsent}
                     }", 'cookiebar_run_if_consent');
                 }
             }
@@ -57,19 +55,15 @@ namespace Restruct\CookieBar\Extensions {
             if (self::cookieBarEnabled()) {
                 return $this->owner->renderWith('Restruct\\CookieBar\\CookieBar');
             }
+
+            return null;
         }
 
-        /**
-         * @return string
-         */
         public function getAcceptCookiesLink() : string
         {
             return CookieBarController::find_link('accept');
         }
 
-        /**
-         * @return bool
-         */
         public function CookieConsent() : bool
         {
             return CookieBarController::isCookieAccepted();

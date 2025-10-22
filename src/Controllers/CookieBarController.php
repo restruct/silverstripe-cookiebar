@@ -2,6 +2,8 @@
 
 namespace Restruct\CookieBar\Controls {
 
+    use Override;
+    use SilverStripe\Control\HTTPResponse;
     use PageController;
     use SilverStripe\Control\Cookie;
     use SilverStripe\Control\Director;
@@ -46,7 +48,6 @@ namespace Restruct\CookieBar\Controls {
 
         /**
          * @param $action
-         * @return string
          */
         public static function find_link($action = false): string
         {
@@ -57,14 +58,15 @@ namespace Restruct\CookieBar\Controls {
          * @param $action
          * @return string
          */
+        #[Override]
         public function Link($action = null)
         {
-            return "cookiebar/$action";
+            return 'cookiebar/' . $action;
         }
 
         /**
          * This action will only get requested if JS is unsupported (or blocked), else the cookie will get set directly from JS
-         * @return \SilverStripe\Control\HTTPResponse|string
+         * @return HTTPResponse|string
          */
         public function accept()
         {
@@ -80,9 +82,6 @@ namespace Restruct\CookieBar\Controls {
             return $this->redirectBack();
         }
 
-        /**
-         * @return bool
-         */
         public static function isCookieAccepted(): bool
         {
             $cookieVal = Cookie::get(self::getCookieName()) ?: Cookie::get('Restruct_CookiesAccepted'); // fallback to legacy cookie
@@ -97,35 +96,23 @@ namespace Restruct\CookieBar\Controls {
         }
 
 
-        /**
-         * @return string
-         */
         public static function getCookieName(): string
         {
             return self::config()->get('cookie_name');
         }
 
-        /**
-         * @param string $cookie_name
-         */
         public static function setCookieName(string $cookie_name): void
         {
             self::config()->merge('cookie_name', $cookie_name);
         }
 
 
-        /**
-         * @return int
-         */
         public static function getCookieAge(): int
         {
             return self::config()->get('cookie_age');
         }
 
 
-        /**
-         * @param int $cookie_age
-         */
         public static function setCookieAge(int $cookie_age): void
         {
             self::config()->merge('cookie_age', $cookie_age);
