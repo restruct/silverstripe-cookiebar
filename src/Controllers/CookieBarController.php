@@ -88,7 +88,7 @@ namespace Restruct\CookieBar\Controls {
 
             // 'Refresh' cookie if required
             if($cookieVal && self::config()->get('cookie_refresh')) {
-                Cookie::set(self::getCookieName(), $cookieVal, self::getCookieAge(), null, null, null, false);
+                Cookie::set(self::getCookieName(), $cookieVal, self::getCookieAge(), null, null, false, false);
             }
 
             return $cookieVal !== null;
