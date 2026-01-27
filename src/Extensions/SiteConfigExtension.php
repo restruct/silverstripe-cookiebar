@@ -32,6 +32,7 @@ namespace Restruct\CookieBar\Extensions {
             'CookieBarEnable'  => 'Boolean',
             'CookieBarRunOnInit' => 'Text',
             'CookieBarRunOnConsent' => 'Text',
+            'CookieBarScriptsInDevTest' => 'Boolean',
         ];
 
         /**
@@ -94,14 +95,15 @@ gtag('consent', 'default', {
 });")
                     ->setRows(8),
                 TextareaField::create('CookieBarRunOnConsent', 'Optional RAW JS code to run if/after consent')
-                    ->setDescription('This code gets wrapped in function cookieBarRunIfConsent, which runs only if ‘cookie consent’ has been given.<br>Please make sure to enter valid javascript only (any HTML tags get filtered out as a basic safety precaution).')
+                    ->setDescription('This code gets wrapped in function cookieBarRunIfConsent, which runs only if "cookie consent" has been given.<br>Please make sure to enter valid javascript only (any HTML tags get filtered out as a basic safety precaution).')
                     ->setAttribute('placeholder', "gtag('consent', 'update', {
   'ad_storage': 'granted',
   'ad_user_data': 'granted',
   'ad_personalization': 'granted'
 });")
                     ->setRows(8),
-
+                CheckboxField::create('CookieBarScriptsInDevTest', 'Also insert scripts in dev/test environments')
+                    ->setDescription('By default, tracking scripts only load in live environment. Enable this for testing.'),
             ]);
         }
 

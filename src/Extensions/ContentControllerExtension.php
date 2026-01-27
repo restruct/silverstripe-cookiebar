@@ -3,7 +3,10 @@
 namespace Restruct\CookieBar\Extensions {
 
     use Restruct\CookieBar\Controls\CookieBarController;
+    use SilverStripe\Control\Controller;
+    use SilverStripe\Control\Director;
     use SilverStripe\Core\Extension;
+    use SilverStripe\Security\Security;
     use SilverStripe\SiteConfig\SiteConfig;
     use SilverStripe\View\Requirements;
 
@@ -23,6 +26,18 @@ namespace Restruct\CookieBar\Extensions {
          */
         public function onAfterInit()
         {
+            // Skip on Security controller (login, logout, password reset, etc.)
+            $controller = Controller::has_curr() ? Controller::curr() : null;
+            if ($controller instanceof Security) {
+                return;
+            }
+
+            // Skip in dev/test unless explicitly enabled
+            $siteConfig = SiteConfig::current_site_config();
+            if (!Director::isLive() && !$siteConfig->CookieBarScriptsInDevTest) {
+                return;
+            }
+
             if (self::cookieBarEnabled() && !self::CookieConsent()) {
                 if (CookieBarController::config()->get('sans_bs_css')) {
                     Requirements::css('restruct/silverstripe-cookiebar:client/dist/css/cookiebar-layout-sans-bs.css'); // non-bootstrap fallback layout (columns)
