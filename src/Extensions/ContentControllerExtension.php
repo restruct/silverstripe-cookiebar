@@ -27,7 +27,14 @@ namespace Restruct\CookieBar\Extensions {
         public function onAfterInit()
         {
             // Skip on Security controller (login, logout, password reset, etc.)
-            $controller = Controller::has_curr() ? Controller::curr() : null;
+            # Controller::has_curr() was removed in Silverstripe 6 (deprecated in 5.4), so calling it
+            # unconditionally fataled every request there. On SS6 curr() simply returns null on an
+            # empty stack; on SS5 curr() raises a warning in that case, so has_curr() is still asked
+            # first wherever it exists (eg when a page is rendered from CLI with nothing pushed).
+            //$controller = Controller::has_curr() ? Controller::curr() : null;
+            $controller = (method_exists(Controller::class, 'has_curr') && !Controller::has_curr())
+                ? null
+                : Controller::curr();
             if ($controller instanceof Security) {
                 return;
             }
