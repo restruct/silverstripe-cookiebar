@@ -69,7 +69,7 @@ The module applies its extensions itself (to `SiteTree`, `ContentController` and
 | Cookie Information Page | Page the information link points at; the link is hidden when empty. |
 | Cookie bar Content | Body text (hidden on mobile). A default text is provided. |
 | Image (optional) | jpg, jpeg, gif or png, shown at 80px height. |
-| Optional RAW JS code to run on page initialisation | Always output in `$MetaTags`, before other scripts: for example Google Consent Mode defaults (the field's placeholder shows an example). HTML tags are stripped. |
+| Optional RAW JS code to run on page initialisation | Output in `$MetaTags`, before other scripts, whether or not the visitor has consented: for example Google Consent Mode defaults (the field's placeholder shows an example). Not output in `dev` and `test` environments unless *Also insert scripts in dev/test environments* is ticked, nor on the `Security` controller (login, logout, lost password). HTML tags are stripped. |
 | Optional RAW JS code to run if/after consent | Wrapped in a function `cookieBarRunIfConsent()`, which `CookieBar.js` calls when the visitor accepts. It is output together with the bar's assets, so only on pages rendered for a visitor who had not yet consented (a page served from a full-page cache also calls it once the consent cookie exists). HTML tags are stripped. |
 | Also insert scripts in dev/test environments | See *How it works* above. |
 
