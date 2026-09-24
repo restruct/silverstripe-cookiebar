@@ -11,6 +11,8 @@ Configurable notice about cookies, a link to a page about them and an 'accept' l
 
 * Silverstripe CMS 5 or 6 (`silverstripe/cms`, `silverstripe/siteconfig`, `silverstripe/asset-admin`)
 * PHP 8.1 or newer (Silverstripe 6 itself needs 8.3)
+* A project `PageController` class: `CookieBarController` (the `cookiebar/accept` action) extends
+  the project's own `PageController`, which every standard CMS project has
 
 ## Version compatibility
 
