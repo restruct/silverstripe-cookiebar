@@ -126,6 +126,9 @@ class SiteConfigExtensionTest extends SapphireTest
     {
         $config = SiteConfig::current_site_config();
         $config->CookieBarRunOnInit = "window.dataLayer = [];<b>bold</b>";
+        # The test runs in dev; since the hand-placed script follows the dev/test switch too (C5),
+        # tick it so this test keeps checking the wrapping and stripping it was written for
+        $config->CookieBarScriptsInDevTest = true;
         $config->write();
 
         $html = $config->CookieBarRunOnInitScript()->forTemplate();
