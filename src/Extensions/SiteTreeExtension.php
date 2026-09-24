@@ -27,13 +27,16 @@ class SiteTreeExtension extends Extension
         # unconditionally fataled every request there. On SS6 curr() simply returns null on an
         # empty stack; on SS5 curr() raises a warning in that case, so has_curr() is still asked
         # first wherever it exists (eg when a page is rendered from CLI with nothing pushed).
+        # Both checks (this one and dev/test below) now run inside SiteConfig::CookieBarRunOnInitScript()
+        # through ScriptGuard::scriptsAllowed(), so a hand-placed $SiteConfig.CookieBarRunOnInitScript
+        # gets them too.
         //$controller = Controller::has_curr() ? Controller::curr() : null;
-        $controller = (method_exists(Controller::class, 'has_curr') && !Controller::has_curr())
-            ? null
-            : Controller::curr();
-        if ($controller instanceof Security) {
-            return;
-        }
+//        $controller = (method_exists(Controller::class, 'has_curr') && !Controller::has_curr())
+//            ? null
+//            : Controller::curr();
+//        if ($controller instanceof Security) {
+//            return;
+//        }
 
         $SiteConf = SiteConfig::current_site_config();
         if (!$SiteConf) {
@@ -42,9 +45,9 @@ class SiteTreeExtension extends Extension
         }
 
         // Skip in dev/test unless explicitly enabled
-        if (!Director::isLive() && !$SiteConf->CookieBarScriptsInDevTest) {
-            return;
-        }
+//        if (!Director::isLive() && !$SiteConf->CookieBarScriptsInDevTest) {
+//            return;
+//        }
 
         /** @var DBHTMLVarchar $jsRunOnInitScriptTag */
         if($jsRunOnInitScriptTag = $SiteConf->CookieBarRunOnInitScript()){

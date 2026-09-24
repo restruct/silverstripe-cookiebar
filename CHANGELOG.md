@@ -29,6 +29,10 @@ recommended on Silverstripe 6**, where 2.3.0 breaks every page.
   missing - for example a Google Consent Mode `update` to `granted` ran once and never again. With
   consent, pages now output the `cookieBarRunIfConsent()` function and call it themselves, behind
   the same master switch, `Security`-controller skip and dev/test switch as the rest.
+- **`$SiteConfig.CookieBarRunOnInitScript` placed by hand ignored the dev/test switch and the
+  `Security`-controller skip** that 2.3.0 added to the `$MetaTags` path, so projects not using
+  `$MetaTags` got the on-init script on development copies and on the login pages. Both output
+  paths, and the bar itself, now share one check.
 - **`CookieBarController::setCookieName()` and `setCookieAge()` threw a TypeError on every call**, on
   every Silverstripe version: they passed a scalar to `config()->merge()`, which only accepts arrays.
   They now use `config()->set()`.
@@ -43,7 +47,7 @@ recommended on Silverstripe 6**, where 2.3.0 breaks every page.
 
 ### Added
 
-- A behavioural test suite (44 tests) with a regression test for each fix above, and CI running it
+- A behavioural test suite (48 tests) with a regression test for each fix above, and CI running it
   on Silverstripe 5 (PHP 8.1, 8.3) and 6 (PHP 8.3, 8.4), plus a real `dev/build` / `db:build`.
 - `.gitattributes` keeps `tests/` and `.github/` out of dist installs.
 - The README now documents every CMS setting, config option and the public API, and has a version

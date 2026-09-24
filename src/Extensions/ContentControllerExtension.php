@@ -3,6 +3,7 @@
 namespace Restruct\CookieBar\Extensions {
 
     use Restruct\CookieBar\Controls\CookieBarController;
+    use Restruct\CookieBar\ScriptGuard;
     use SilverStripe\Control\Controller;
     use SilverStripe\Control\Director;
     use SilverStripe\Core\Extension;
@@ -31,17 +32,21 @@ namespace Restruct\CookieBar\Extensions {
             # unconditionally fataled every request there. On SS6 curr() simply returns null on an
             # empty stack; on SS5 curr() raises a warning in that case, so has_curr() is still asked
             # first wherever it exists (eg when a page is rendered from CLI with nothing pushed).
+            # Both checks now live in ScriptGuard::scriptsAllowed(), shared with the on-init script paths.
             //$controller = Controller::has_curr() ? Controller::curr() : null;
-            $controller = (method_exists(Controller::class, 'has_curr') && !Controller::has_curr())
-                ? null
-                : Controller::curr();
-            if ($controller instanceof Security) {
-                return;
-            }
+//            $controller = (method_exists(Controller::class, 'has_curr') && !Controller::has_curr())
+//                ? null
+//                : Controller::curr();
+//            if ($controller instanceof Security) {
+//                return;
+//            }
 
             // Skip in dev/test unless explicitly enabled
-            $siteConfig = SiteConfig::current_site_config();
-            if (!Director::isLive() && !$siteConfig->CookieBarScriptsInDevTest) {
+//            $siteConfig = SiteConfig::current_site_config();
+//            if (!Director::isLive() && !$siteConfig->CookieBarScriptsInDevTest) {
+//                return;
+//            }
+            if (!ScriptGuard::scriptsAllowed()) {
                 return;
             }
 
@@ -75,7 +80,7 @@ namespace Restruct\CookieBar\Extensions {
                 # run-if-consent script used to be output only together with them, so it ran on the one page
                 # where the visitor clicked Accept and never again (eg Google Consent Mode 'update' was
                 # missing on every later page load). Output it here as well and call it ourselves, since
-                # CookieBar.js is not on the page to do so. The Security and dev/test guards above apply.
+                # CookieBar.js is not on the page to do so. The ScriptGuard check above applies.
                 if ($runIfConsentFunction = self::runIfConsentFunction()) {
                     # Custom scripts are written at the end of <body> by default, but a project may move
                     # them to <head>; wait for the DOM in that case, as CookieBar.js would have.

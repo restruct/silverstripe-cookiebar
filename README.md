@@ -80,7 +80,9 @@ The module applies its extensions itself (to `SiteTree`, `ContentController` and
 | Also insert scripts in dev/test environments | See *How it works* above. |
 
 The on-init script is added through `$MetaTags`. If your templates do not call `$MetaTags()`, place
-`$SiteConfig.CookieBarRunOnInitScript` in the `<head>` yourself.
+`$SiteConfig.CookieBarRunOnInitScript` in the `<head>` yourself. It applies the same checks as the
+`$MetaTags` path: nothing in `dev` and `test` unless *Also insert scripts in dev/test environments*
+is ticked, and nothing on the `Security` controller.
 
 ## Configuration
 
