@@ -37,5 +37,34 @@
 		</div>
 	</div>
 </script>
+<%-- The bar above is a JS template: without JavaScript nothing renders it, so no-JS visitors never saw the
+     Accept link. This copy is shown only when scripting is off (browsers with JavaScript treat <noscript>
+     content as inert text), so the bar never appears twice. The link is root-relative, since the
+     document-relative 'cookiebar/accept' 404s on any page below the site root. --%>
+<% if $Top.ShowNoScriptCookieBar %>
+<noscript>
+	<div id="cookiebar" class="cookiebar-noscript">
+		<div class="cookiebar-container container">
+			<div class="cookiebar-row row pt-2 pb-2">
+				<div class="cookiebar-notification col-md col-lg-7 offset-lg-1">
+					<div class="notification-inner typography">
+						<div class="notification-title">
+							$CookieBarTitle
+						</div>
+						<div class="notification-content">
+							$CookieBarContent
+						</div>
+					</div>
+				</div>
+				<div class="cookiebar-links col-md-4 col-lg-3">
+					<a class="acceptlink btn btn-success" data-purpose="acceptcookies" href="$Top.AcceptCookiesRootLink">{$CookieCloseText}</a>
+					<% if $CookiePage %>
+						<a class="infolink btn btn-link" href="$CookiePage.Link">{$CookieMoreText}</a>
+					<% end_if %>
+				</div>
+			</div>
+		</div>
+	</div>
+</noscript>
+<% end_if %>
 <% end_with %>
-

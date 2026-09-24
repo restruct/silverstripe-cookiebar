@@ -1,5 +1,29 @@
 # Changelog
 
+## 2.3.2 / 3.1.1 (2026-09-25)
+
+**2.3.2 and 3.1.1 are the same code**, tagged twice as with 2.3.1 / 3.1.0: 2.3.2 for Silverstripe 5
+projects constrained to `^2`, 3.1.1 for Silverstripe 6. Both require Silverstripe `^5 || ^6`.
+
+### Fixed
+
+- **Visitors without JavaScript saw no cookie bar and could not consent**, on every Silverstripe
+  version. The README promised a no-JS *Accept* link, but the whole bar, link included, sits inside the
+  `<script type="text/x-template" id="cookiebar-template">` that only `CookieBar.js` renders. `$CookieBar`
+  now also outputs a `<noscript>` copy of the bar (title, content, *Accept* and *more info* links). It
+  sits outside the JS template and browsers with JavaScript do not render `<noscript>` content, so the
+  bar never shows twice; it is output under the same conditions as the JS bar (not after consent, not
+  on the `Security` controller, not in dev/test unless enabled).
+- **The no-JS accept link is root-relative** (`/cookiebar/accept`, including a base URL subdirectory),
+  via the new `$AcceptCookiesRootLink`. `$AcceptCookiesLink` returns the document-relative
+  `cookiebar/accept`, which 404s on any page below the site root; it is unchanged, and still used in the
+  JS template, where `CookieBar.js` handles the click and the URL is never followed.
+
+### Added
+
+- `$AcceptCookiesRootLink` and `$ShowNoScriptCookieBar` template helpers (see the README). If you
+  override `CookieBar.ss`, add the `<noscript>` block from the module's template to your copy.
+
 ## 2.3.1 / 3.1.0 (2026-09-24)
 
 **2.3.1 and 3.1.0 are the same code**, tagged twice: 2.3.1 for projects constrained to `^2`
