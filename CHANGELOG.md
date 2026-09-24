@@ -1,6 +1,6 @@
 # Changelog
 
-## 2.3.1 / 3.1.0 (unreleased)
+## 2.3.1 / 3.1.0 (2026-09-24)
 
 **2.3.1 and 3.1.0 are the same code**, tagged twice: 2.3.1 for projects constrained to `^2`
 (Silverstripe 5), 3.1.0 so that Silverstripe 6 projects, which Composer resolves to the 3.x tags,
