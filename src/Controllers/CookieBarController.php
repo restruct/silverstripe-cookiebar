@@ -72,7 +72,11 @@ namespace Restruct\CookieBar\Controls {
         {
             if ( !self::isCookieAccepted() ) {
                 //$name, $value, $expiry = 90, $path = null, $domain = null, $secure = false, $httpOnly = false
-                Cookie::set(self::getCookieName(), time(), self::getCookieAge() ?: 365, null, null, null, false);
+                # $secure must be a bool: Silverstripe 6 types Cookie::set()'s parameters, and a null there
+                # is a TypeError, so this no-JS fallback action fataled on SS6. false is what the null
+                # meant on SS5, and matches the refresh call in isCookieAccepted().
+//                Cookie::set(self::getCookieName(), time(), self::getCookieAge() ?: 365, null, null, null, false);
+                Cookie::set(self::getCookieName(), (string) time(), self::getCookieAge() ?: 365, null, null, false, false);
             }
 
             if ( Director::is_ajax() ) {
