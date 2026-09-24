@@ -18,16 +18,19 @@ Configurable notice about cookies, a link to a page about them and an 'accept' l
 
 | Branch | Module version | Silverstripe | PHP |
 |--------|----------------|--------------|-----|
-| `master` | `2.3.x` | `^5 \|\| ^6` | `^8.1` |
-| (tags only) | `3.0.x` | `^6` | not declared (Silverstripe 6: 8.3+) |
+| `master` | `2.3.1` and `3.1.0` (same code) | `^5 \|\| ^6` | `^8.1` |
+| (tags only) | `3.0.0`, `3.0.1` | `^6` | not declared (Silverstripe 6: 8.3+); superseded by `3.1.0` |
 | (tags only) | `2.2.4` | `^4 \|\| ^5` | not declared (follows Silverstripe) |
 | (tags only) | `2.0` - `2.2.3` | `^4.4` | not declared (follows Silverstripe) |
 
 Silverstripe 4 reached end of life in April 2025 and is no longer supported or tested here. Projects
 still on it should stay on the `2.2.x` tags, which remain available.
 
-`master` is the only maintained line and supports Silverstripe 5 and 6 from one codebase. The
-`3.0.x` tags (Silverstripe 6 only) predate it and are superseded by it; see [CHANGELOG.md](CHANGELOG.md).
+`master` is the only maintained line and supports Silverstripe 5 and 6 from one codebase. Its
+current release is tagged twice with identical code: `2.3.1` for projects constrained to `^2`, and
+`3.1.0` so that Silverstripe 6 projects on `^3` receive the same fixes. The older `3.0.0` and `3.0.1`
+tags (Silverstripe 6 only) predate this line and are superseded by `3.1.0`; see
+[CHANGELOG.md](CHANGELOG.md).
 
 **`composer.json` is the source of truth** for exact constraints; this table is a quick reference.
 

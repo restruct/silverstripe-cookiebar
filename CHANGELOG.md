@@ -1,6 +1,10 @@
 # Changelog
 
-## 2.3.1 (unreleased)
+## 2.3.1 / 3.1.0 (unreleased)
+
+**2.3.1 and 3.1.0 are the same code**, tagged twice: 2.3.1 for projects constrained to `^2`
+(Silverstripe 5), 3.1.0 so that Silverstripe 6 projects, which Composer resolves to the 3.x tags,
+receive these fixes. Both require Silverstripe `^5 || ^6`.
 
 Makes the Silverstripe 6 support that 2.3.0 declared actually work, and fixes the two public setters.
 No behaviour changes on Silverstripe 5 other than the setter fix. **Upgrade from 2.3.0 is strongly
@@ -48,7 +52,9 @@ recommended on Silverstripe 6**, where 2.3.0 breaks every page.
 ### Note on the 3.0.x tags
 
 3.0.0 and 3.0.1 (Silverstripe 6 only) were tagged before 2.3.0 and lack its Security-controller and
-dev/test switches as well as the fixes above. This release supersedes them on Silverstripe 6.
+dev/test switches as well as the fixes above. **3.1.0 supersedes them**: a Silverstripe 6 project on
+`^3` or `^3.0` picks it up with a plain `composer update`. 3.1.0 is identical to 2.3.1 and also
+installs on Silverstripe 5.
 
 ## 2.3.0
 
