@@ -3,6 +3,7 @@
 namespace Restruct\CookieBar\Extensions {
 
     use Restruct\CookieBar\Controls\CookieBarController;
+    use Restruct\CookieBar\ScriptGuard;
     use SilverStripe\AssetAdmin\Forms\UploadField;
     use SilverStripe\Assets\Image;
     use SilverStripe\CMS\Model\SiteTree;
@@ -114,10 +115,18 @@ gtag('consent', 'default', {
 
         /**
          * Wrap CookieBarRunOnInit script into <script> tag (if any)
+         *
+         * Returns null on the Security controller and outside `live` unless CookieBarScriptsInDevTest is
+         * ticked (ScriptGuard::scriptsAllowed()). Those checks used to sit only in the $MetaTags path, so a
+         * project placing $SiteConfig.CookieBarRunOnInitScript by hand got the script everywhere.
          * @return DBHTMLVarchar|null
          */
         public function CookieBarRunOnInitScript()
         {
+            if (!ScriptGuard::scriptsAllowed(SiteConfig::current_site_config())) {
+                return null;
+            }
+
             if($jsToRunOnInit = SiteConfig::current_site_config()->CookieBarRunOnInit){
                 $jsToRunOnInit = strip_tags($jsToRunOnInit); // just to be sure no <html> gets included...
 

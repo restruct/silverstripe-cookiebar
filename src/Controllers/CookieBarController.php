@@ -72,7 +72,11 @@ namespace Restruct\CookieBar\Controls {
         {
             if ( !self::isCookieAccepted() ) {
                 //$name, $value, $expiry = 90, $path = null, $domain = null, $secure = false, $httpOnly = false
-                Cookie::set(self::getCookieName(), time(), self::getCookieAge() ?: 365, null, null, null, false);
+                # $secure must be a bool: Silverstripe 6 types Cookie::set()'s parameters, and a null there
+                # is a TypeError, so this no-JS fallback action fataled on SS6. false is what the null
+                # meant on SS5, and matches the refresh call in isCookieAccepted().
+//                Cookie::set(self::getCookieName(), time(), self::getCookieAge() ?: 365, null, null, null, false);
+                Cookie::set(self::getCookieName(), (string) time(), self::getCookieAge() ?: 365, null, null, false, false);
             }
 
             if ( Director::is_ajax() ) {
@@ -103,7 +107,10 @@ namespace Restruct\CookieBar\Controls {
 
         public static function setCookieName(string $cookie_name): void
         {
-            self::config()->merge('cookie_name', $cookie_name);
+            # merge() only accepts arrays (MutableConfigCollectionInterface::merge() types $value array), so this
+            # setter threw a TypeError on every call. A scalar is replaced with set().
+//            self::config()->merge('cookie_name', $cookie_name);
+            self::config()->set('cookie_name', $cookie_name);
         }
 
 
@@ -115,7 +122,10 @@ namespace Restruct\CookieBar\Controls {
 
         public static function setCookieAge(int $cookie_age): void
         {
-            self::config()->merge('cookie_age', $cookie_age);
+            # merge() only accepts arrays (MutableConfigCollectionInterface::merge() types $value array), so this
+            # setter threw a TypeError on every call. A scalar is replaced with set().
+//            self::config()->merge('cookie_age', $cookie_age);
+            self::config()->set('cookie_age', $cookie_age);
         }
     }
 }
