@@ -15,6 +15,7 @@ use SilverStripe\SiteConfig\SiteConfig;
 class SiteTreeExtension extends Extension
 {
     // Hook into MetaTags to inject CookieBarRunOnInit JS code before any other
+    # This is the Silverstripe 5 hook name; see updateMetaTags() below for Silverstripe 6.
     /**
      * @param $tags
      * @return void
@@ -49,5 +50,22 @@ class SiteTreeExtension extends Extension
         if($jsRunOnInitScriptTag = $SiteConf->CookieBarRunOnInitScript()){
             $tags .= "\n" . $jsRunOnInitScriptTag->forTemplate();
         }
+    }
+
+    /**
+     * Silverstripe 6 name of the same hook.
+     *
+     * SiteTree::MetaTags() fires extend('MetaTags') on Silverstripe 5 but extend('updateMetaTags') on
+     * Silverstripe 6 (6.0.0 changelog, "Changes to some extension hook names"). Nothing errors when a
+     * hook name stops being fired, so without this method the CookieBarRunOnInit script silently
+     * disappeared from every page on Silverstripe 6. Each major fires exactly one of the two names,
+     * so the script is never added twice.
+     *
+     * @param string $tags
+     * @return void
+     */
+    public function updateMetaTags(&$tags)
+    {
+        $this->MetaTags($tags);
     }
 }
