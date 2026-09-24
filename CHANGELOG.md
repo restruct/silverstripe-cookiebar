@@ -23,6 +23,12 @@ recommended on Silverstripe 6**, where 2.3.0 breaks every page.
 - **Silverstripe 6: the no-JavaScript accept link (`cookiebar/accept`) threw a TypeError** instead of
   setting the consent cookie: it passed `null` as `Cookie::set()`'s `$secure` argument, which is
   typed `bool` on Silverstripe 6. 3.0.1 fixed the same argument in `isCookieAccepted()` only.
+- **The "RAW JS code to run if/after consent" script only ran on the page where the visitor clicked
+  Accept**, on every Silverstripe version. It was output together with the bar's assets, which are
+  (rightly) left out once the consent cookie exists, so on every later page load the script was
+  missing - for example a Google Consent Mode `update` to `granted` ran once and never again. With
+  consent, pages now output the `cookieBarRunIfConsent()` function and call it themselves, behind
+  the same master switch, `Security`-controller skip and dev/test switch as the rest.
 - **`CookieBarController::setCookieName()` and `setCookieAge()` threw a TypeError on every call**, on
   every Silverstripe version: they passed a scalar to `config()->merge()`, which only accepts arrays.
   They now use `config()->set()`.
@@ -37,17 +43,11 @@ recommended on Silverstripe 6**, where 2.3.0 breaks every page.
 
 ### Added
 
-- A behavioural test suite (37 tests) with a regression test for each fix above, and CI running it
+- A behavioural test suite (44 tests) with a regression test for each fix above, and CI running it
   on Silverstripe 5 (PHP 8.1, 8.3) and 6 (PHP 8.3, 8.4), plus a real `dev/build` / `db:build`.
 - `.gitattributes` keeps `tests/` and `.github/` out of dist installs.
 - The README now documents every CMS setting, config option and the public API, and has a version
   compatibility table.
-
-### Known behaviour, unchanged
-
-- The "RAW JS code to run if/after consent" script is output together with the bar's assets, so it
-  only runs on pages rendered before consent existed (at the moment of accepting), not on later page
-  loads served by Silverstripe.
 
 ### Note on the 3.0.x tags
 

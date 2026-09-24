@@ -60,13 +60,50 @@ namespace Restruct\CookieBar\Extensions {
                     ]);
 
                 // Inject optional JS code to run if/after consent
-                if ($jsToRunIfConsent = SiteConfig::current_site_config()->CookieBarRunOnConsent) {
-                    $jsToRunIfConsent = strip_tags($jsToRunIfConsent); // just to be sure no <html> gets included...
-                    Requirements::customScript("function cookieBarRunIfConsent() {
-                        {$jsToRunIfConsent}
+                # Only defined here: CookieBar.js calls it when the visitor clicks Accept.
+//                if ($jsToRunIfConsent = SiteConfig::current_site_config()->CookieBarRunOnConsent) {
+//                    $jsToRunIfConsent = strip_tags($jsToRunIfConsent); // just to be sure no <html> gets included...
+//                    Requirements::customScript("function cookieBarRunIfConsent() {
+//                        {$jsToRunIfConsent}
+//                    }", 'cookiebar_run_if_consent');
+//                }
+                if ($runIfConsentFunction = self::runIfConsentFunction()) {
+                    Requirements::customScript($runIfConsentFunction, 'cookiebar_run_if_consent');
+                }
+            } elseif (self::cookieBarEnabled()) {
+                # Consent already exists, so the bar's CSS and CookieBar.js are (rightly) not loaded. The
+                # run-if-consent script used to be output only together with them, so it ran on the one page
+                # where the visitor clicked Accept and never again (eg Google Consent Mode 'update' was
+                # missing on every later page load). Output it here as well and call it ourselves, since
+                # CookieBar.js is not on the page to do so. The Security and dev/test guards above apply.
+                if ($runIfConsentFunction = self::runIfConsentFunction()) {
+                    # Custom scripts are written at the end of <body> by default, but a project may move
+                    # them to <head>; wait for the DOM in that case, as CookieBar.js would have.
+                    Requirements::customScript($runIfConsentFunction . "
+                    if (document.readyState === 'loading') {
+                        document.addEventListener('DOMContentLoaded', cookieBarRunIfConsent);
+                    } else {
+                        cookieBarRunIfConsent();
                     }", 'cookiebar_run_if_consent');
                 }
             }
+        }
+
+        /**
+         * The CookieBarRunOnConsent code wrapped in function cookieBarRunIfConsent(), or null when empty.
+         * Shared by the before-consent path (CookieBar.js calls it on Accept) and the after-consent path.
+         */
+        private static function runIfConsentFunction(): ?string
+        {
+            $jsToRunIfConsent = SiteConfig::current_site_config()->CookieBarRunOnConsent;
+            if (!$jsToRunIfConsent) {
+                return null;
+            }
+            $jsToRunIfConsent = strip_tags($jsToRunIfConsent); // just to be sure no <html> gets included...
+
+            return "function cookieBarRunIfConsent() {
+                        {$jsToRunIfConsent}
+                    }";
         }
 
         /**

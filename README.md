@@ -58,7 +58,8 @@ The module applies its extensions itself (to `SiteTree`, `ContentController` and
   `$CookieBar` markup and, on *Accept*, writes the consent cookie itself.
 * Visitors without JavaScript follow the *Accept* link instead, to `cookiebar/accept`, which sets the
   same cookie server side and redirects back (an AJAX request gets the plain response `success`).
-* Once consent has been given, the bar's CSS and JS are no longer loaded at all.
+* Once consent has been given, the bar's CSS and JS are no longer loaded at all; only the optional
+  *run if/after consent* script is output, and called, on every page.
 * Nothing is injected on the `Security` controller (login, logout, lost password).
 * **In `dev` and `test` environments nothing is injected** unless *Also insert scripts in dev/test
   environments* is ticked, so tracking scripts do not run on development copies by accident.
@@ -75,7 +76,7 @@ The module applies its extensions itself (to `SiteTree`, `ContentController` and
 | Cookie bar Content | Body text (hidden on mobile). A default text is provided. |
 | Image (optional) | jpg, jpeg, gif or png, shown at 80px height. |
 | Optional RAW JS code to run on page initialisation | Output in `$MetaTags`, before other scripts, whether or not the visitor has consented: for example Google Consent Mode defaults (the field's placeholder shows an example). Not output in `dev` and `test` environments unless *Also insert scripts in dev/test environments* is ticked, nor on the `Security` controller (login, logout, lost password). HTML tags are stripped. |
-| Optional RAW JS code to run if/after consent | Wrapped in a function `cookieBarRunIfConsent()`, which `CookieBar.js` calls when the visitor accepts. It is output together with the bar's assets, so only on pages rendered for a visitor who had not yet consented (a page served from a full-page cache also calls it once the consent cookie exists). HTML tags are stripped. |
+| Optional RAW JS code to run if/after consent | Wrapped in a function `cookieBarRunIfConsent()`. Before consent, `CookieBar.js` calls it when the visitor accepts; once consent exists, every page outputs the function and calls it itself (once the DOM is ready). Not output in `dev` and `test` environments unless *Also insert scripts in dev/test environments* is ticked, nor on the `Security` controller. HTML tags are stripped. |
 | Also insert scripts in dev/test environments | See *How it works* above. |
 
 The on-init script is added through `$MetaTags`. If your templates do not call `$MetaTags()`, place
