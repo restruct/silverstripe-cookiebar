@@ -107,7 +107,10 @@ namespace Restruct\CookieBar\Controls {
 
         public static function setCookieName(string $cookie_name): void
         {
-            self::config()->merge('cookie_name', $cookie_name);
+            # merge() only accepts arrays (MutableConfigCollectionInterface::merge() types $value array), so this
+            # setter threw a TypeError on every call. A scalar is replaced with set().
+//            self::config()->merge('cookie_name', $cookie_name);
+            self::config()->set('cookie_name', $cookie_name);
         }
 
 
@@ -119,7 +122,10 @@ namespace Restruct\CookieBar\Controls {
 
         public static function setCookieAge(int $cookie_age): void
         {
-            self::config()->merge('cookie_age', $cookie_age);
+            # merge() only accepts arrays (MutableConfigCollectionInterface::merge() types $value array), so this
+            # setter threw a TypeError on every call. A scalar is replaced with set().
+//            self::config()->merge('cookie_age', $cookie_age);
+            self::config()->set('cookie_age', $cookie_age);
         }
     }
 }
