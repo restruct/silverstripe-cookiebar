@@ -56,8 +56,10 @@ The module applies its extensions itself (to `SiteTree`, `ContentController` and
 * While the bar is enabled and the visitor has not consented, every page built on
   `ContentController` loads the bar's CSS and `CookieBar.js`. The script shows the bar from the
   `$CookieBar` markup and, on *Accept*, writes the consent cookie itself.
-* Visitors without JavaScript follow the *Accept* link instead, to `cookiebar/accept`, which sets the
-  same cookie server side and redirects back (an AJAX request gets the plain response `success`).
+* Visitors without JavaScript get the bar from a `<noscript>` copy in the same `$CookieBar` markup
+  (message and links only, shown under the same conditions as the JS bar) and follow its *Accept*
+  link instead, to `/cookiebar/accept` (below the site's base URL), which sets the same cookie server
+  side and redirects back (an AJAX request gets the plain response `success`).
 * Once consent has been given, the bar's CSS and JS are no longer loaded at all; only the optional
   *run if/after consent* script is output, and called, on every page.
 * Nothing is injected on the `Security` controller (login, logout, lost password).
@@ -107,9 +109,15 @@ Requirements::block('restruct/silverstripe-cookiebar:client/dist/css/cookiebar.c
 
 For templates, on any `ContentController`:
 
-* `$CookieBar` - the bar markup (a `text/x-template` script block), or nothing when the bar is disabled.
+* `$CookieBar` - the bar markup (a `text/x-template` script block, plus a `<noscript>` copy of the bar
+  for visitors without JavaScript), or nothing when the bar is disabled.
 * `$CookieConsent` - whether the visitor has consented. Also available as `$SiteConfig.CookieConsent`.
-* `$AcceptCookiesLink` - the no-JavaScript accept URL.
+* `$AcceptCookiesLink` - the accept URL, document-relative (`cookiebar/accept`), as used in the JS template.
+* `$AcceptCookiesRootLink` - the accept URL relative to the web root (`/cookiebar/accept`, including any
+  base URL subdirectory); use this one in your own markup, since the document-relative form 404s on
+  pages below the site root.
+* `$ShowNoScriptCookieBar` - whether the `<noscript>` bar is output: scripts allowed for this request
+  (not `Security`, not dev/test unless enabled) and no consent yet.
 
 From PHP, static methods on `Restruct\CookieBar\Controls\CookieBarController`:
 

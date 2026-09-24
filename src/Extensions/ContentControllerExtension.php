@@ -128,6 +128,26 @@ namespace Restruct\CookieBar\Extensions {
             return CookieBarController::find_link('accept');
         }
 
+        /**
+         * The accept URL relative to the web root (eg /cookiebar/accept, or /subdir/cookiebar/accept),
+         * for the <noscript> bar. getAcceptCookiesLink() returns the document-relative 'cookiebar/accept',
+         * which a browser resolves against the current page and so 404s on any page below the site root.
+         */
+        public function getAcceptCookiesRootLink() : string
+        {
+            return Controller::join_links(Director::baseURL(), CookieBarController::find_link('accept'));
+        }
+
+        /**
+         * Whether to output the <noscript> copy of the bar: under the same conditions the JS bar appears
+         * (the bar's assets pass ScriptGuard and no consent exists yet). $CookieBar itself already
+         * returns nothing when the bar is disabled.
+         */
+        public function ShowNoScriptCookieBar() : bool
+        {
+            return ScriptGuard::scriptsAllowed() && !CookieBarController::isCookieAccepted();
+        }
+
         public function CookieConsent() : bool
         {
             return CookieBarController::isCookieAccepted();
