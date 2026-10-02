@@ -27,7 +27,9 @@ async function save(page: Page): Promise<void> {
 
 /** Load HOME as a fresh visitor (no CMS session, no consent) in its own context. */
 async function visit(browser: Browser, baseURL: string) {
-    const context = await browser.newContext({ baseURL });
+    // An explicit empty storageState: inside a test, browser.newContext() takes its defaults from
+    // the project's `use`, which includes the saved admin session.
+    const context = await browser.newContext({ baseURL, storageState: { cookies: [], origins: [] } });
     const page = await context.newPage();
     const errors: string[] = [];
     page.on('pageerror', (e) => errors.push(e.message));
@@ -121,7 +123,7 @@ test.fixme('an image uploaded in Settings shows in the bar for visitors (#5)', a
         await expect(page.locator('#Form_EditForm_CookieImage_Holder')).toContainText('ckb-test');
         await save(page);
 
-        const context = await browser.newContext({ baseURL });
+        const context = await browser.newContext({ baseURL, storageState: { cookies: [], origins: [] } });
         const visitor = await context.newPage();
         const images: number[] = [];
         visitor.on('response', (r) => r.url().includes('/assets/') && images.push(r.status()));
