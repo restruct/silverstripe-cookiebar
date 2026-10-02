@@ -1,0 +1,9 @@
+# Installed by npm ci in run.sh
+node_modules/
+# Playwright output: failure screenshots, traces, the HTML report, saved login state
+test-results/
+playwright-report/
+.auth/
+# The module root's .gitignore ignores package-lock.json everywhere; this harness needs its lock
+# file committed (npm ci in run.sh and in .github/workflows/browser-tests.yml).
+!package-lock.json
