@@ -4,6 +4,7 @@ namespace Restruct\CookieBar\Tests;
 
 use Restruct\CookieBar\Extensions\SiteConfigExtension;
 use SilverStripe\AssetAdmin\Forms\UploadField;
+use SilverStripe\Assets\Dev\TestAssetStore;
 use SilverStripe\Assets\Image;
 use SilverStripe\CMS\Model\SiteTree;
 use SilverStripe\Dev\SapphireTest;
@@ -15,6 +16,7 @@ use SilverStripe\Forms\TreeDropdownField;
 use SilverStripe\ORM\DataObject;
 use SilverStripe\ORM\DB;
 use SilverStripe\SiteConfig\SiteConfig;
+use SilverStripe\SiteConfig\SiteConfigLeftAndMain;
 
 /**
  * The SiteConfig extension: that it applies, what schema it builds, the defaults, the CMS fields it
@@ -135,6 +137,42 @@ class SiteConfigExtensionTest extends SapphireTest
 
         $this->assertSame('<script>window.dataLayer = [];bold</script>', $html);
     }
+
+    /**
+     * #5: an image uploaded into Settings > Cookie bar stayed in draft, so visitors saw no image.
+     * SiteConfig is not versioned; on save the CMS publishes it recursively (versioned's
+     * RecursivePublishableHandler::onAfterSave on LeftAndMain, which LeftAndMain::save() fires on
+     * SS6; SS5's save_siteconfig calls publishRecursive() itself). That only reaches the image when
+     * SiteConfig owns it.
+     */
+    public function testCookieImageIsPublishedWhenTheSettingsAreSaved()
+    {
+        TestAssetStore::activate('CookieBarTest');
+        try {
+            $image = Image::create();
+            $image->setFromString(base64_decode(self::TINY_PNG), 'ckb-test.png');
+            # A fresh upload is a draft-only file, as the UploadField leaves it
+            $image->write();
+            $this->assertFalse($image->isPublished(), 'precondition: the upload starts in draft');
+
+            $config = SiteConfig::current_site_config();
+            $config->CookieImageID = $image->ID;
+            $config->write();
+            # The CMS save hook, as LeftAndMain::save() fires it
+            SiteConfigLeftAndMain::singleton()->extend('onAfterSave', $config);
+
+            $this->assertTrue(
+                Image::get()->byID($image->ID)->isPublished(),
+                'the cookie bar image must be published together with the settings'
+            );
+            $this->assertContains('CookieImage', (array)SiteConfig::config()->get('owns'));
+        } finally {
+            TestAssetStore::reset();
+        }
+    }
+
+    /** 1x1 transparent PNG */
+    private const TINY_PNG = 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==';
 
     private function siteConfigTable(): string
     {
