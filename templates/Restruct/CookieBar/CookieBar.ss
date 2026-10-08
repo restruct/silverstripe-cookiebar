@@ -6,7 +6,7 @@
                 <div class="cookiebar-notification col-md col-lg-7 offset-lg-1">
                     <div class="notification-inner typography">
                         <% if $CookieImage %>
-                            $CookieImage.SetHeight(80)
+                            $CookieImage.ScaleHeight(80)
                         <% end_if %>
                         <div class="notification-title">
                             $CookieBarTitle

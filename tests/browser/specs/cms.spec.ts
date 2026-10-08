@@ -109,7 +109,7 @@ test('a saved title shows on the front end; the dev/test switch and the master s
     expect(restored.title?.trim()).toBe(SEEDED_TITLE);
 });
 
-test.fixme('an image uploaded in Settings shows in the bar for visitors (#5)', async ({ page, browser, baseURL }) => {
+test('an image uploaded in Settings shows in the bar for visitors (#5)', async ({ page, browser, baseURL }) => {
     // https://github.com/restruct/silverstripe-cookiebar/issues/5 - the image stays in draft (no
     // $owns, and SiteConfig is not versioned), so a logged-out visitor's bar has no <img>.
     // Measured red at toHaveCount(1) on SS5 and SS6 (2026-10-02). On SS6 the admin itself also

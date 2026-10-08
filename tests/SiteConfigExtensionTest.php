@@ -6,6 +6,7 @@ use Restruct\CookieBar\Extensions\SiteConfigExtension;
 use SilverStripe\AssetAdmin\Forms\UploadField;
 use SilverStripe\Assets\Dev\TestAssetStore;
 use SilverStripe\Assets\Image;
+use SilverStripe\CMS\Controllers\ContentController;
 use SilverStripe\CMS\Model\SiteTree;
 use SilverStripe\Dev\SapphireTest;
 use SilverStripe\Forms\CheckboxField;
@@ -166,6 +167,32 @@ class SiteConfigExtensionTest extends SapphireTest
                 'the cookie bar image must be published together with the settings'
             );
             $this->assertContains('CookieImage', (array)SiteConfig::config()->get('owns'));
+        } finally {
+            TestAssetStore::reset();
+        }
+    }
+
+    /**
+     * #5, second cause: the template called $CookieImage.SetHeight(80), an SS3 method that does not
+     * exist on SS4+ Image. A template swallows the missing method, so the bar rendered no <img> even
+     * for a published image.
+     */
+    public function testCookieImageRendersInTheBar()
+    {
+        TestAssetStore::activate('CookieBarTest');
+        try {
+            $image = Image::create();
+            $image->setFromString(base64_decode(self::TINY_PNG), 'ckb-test.png');
+            $image->write();
+
+            $config = SiteConfig::current_site_config();
+            $config->CookieBarEnable = true;
+            $config->CookieImageID = $image->ID;
+            $config->write();
+
+            $html = (string) ContentController::create()->CookieBar();
+
+            $this->assertMatchesRegularExpression('#<img[^>]+height="80"#', $html, 'the bar must show the image, 80px high');
         } finally {
             TestAssetStore::reset();
         }
