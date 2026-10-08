@@ -1,6 +1,6 @@
 # Changelog
 
-## 2.3.3 / 3.1.2 (unreleased)
+## 2.3.3 / 3.1.2 (2026-10-08)
 
 Same code for both tags, as before: 2.3.3 for Silverstripe 5 projects constrained to `^2`, 3.1.2 for
 Silverstripe 6. Both require Silverstripe `^5 || ^6`.
