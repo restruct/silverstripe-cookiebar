@@ -1,5 +1,25 @@
 # Changelog
 
+## 2.3.3 / 3.1.2 (unreleased)
+
+Same code for both tags, as before: 2.3.3 for Silverstripe 5 projects constrained to `^2`, 3.1.2 for
+Silverstripe 6. Both require Silverstripe `^5 || ^6`.
+
+### Fixed
+
+- **The optional cookie bar image never showed to visitors** (#5), on every Silverstripe version, for
+  two reasons:
+  - An image uploaded in *Settings > Cookie bar* stayed in draft. `SiteConfig` now owns
+    `CookieImage` (`$owns`), so the recursive publish the CMS runs when the settings are saved
+    publishes the image too. An image uploaded before this release is still a draft: save the
+    settings once more, or publish it in *Files*.
+  - The template called `$CookieImage.SetHeight(80)`, a Silverstripe 3 method that does not exist
+    on Silverstripe 4+ images, so the bar rendered no `<img>` even for a published image. It now calls
+    `ScaleHeight(80)`. If you override `CookieBar.ss`, make the same change in your copy.
+- **`CookieBar.js` threw `Cannot read properties of null (reading 'innerHTML')`** (#6) on every page
+  whose template does not output `$CookieBar` (the script is added on every page while the bar is
+  enabled). It now does nothing on such a page.
+
 ## 2.3.2 / 3.1.1 (2026-09-25)
 
 **2.3.2 and 3.1.1 are the same code**, tagged twice as with 2.3.1 / 3.1.0: 2.3.2 for Silverstripe 5
