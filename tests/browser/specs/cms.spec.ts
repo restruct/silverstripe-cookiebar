@@ -118,9 +118,16 @@ test.fixme('an image uploaded in Settings shows in the bar for visitors (#5)', a
     test.setTimeout(60_000);
     await openCookieBarTab(page);
     try {
+        // The field shows the file name as soon as the upload starts, before the server has
+        // returned the new File ID; saving then posts CookieImage = 0 (measured 2026-10-08: the
+        // settings were written with CookieImageID 0). So wait for the field's own upload POST.
+        const uploaded = page.waitForResponse((r) => r.request().method() === 'POST' && /\/field\/CookieImage\/upload/.test(r.url()));
         // The React UploadField's dropzone input.
         await page.locator('input.dz-input-CookieImage').setInputFiles({ name: 'ckb-test.png', mimeType: 'image/png', buffer: tinyPng() });
-        await expect(page.locator('#Form_EditForm_CookieImage_Holder')).toContainText('ckb-test');
+        expect((await uploaded).status()).toBe(200);
+        // Once uploaded the field shows the server's Title, "ckb test"; "ckb-test" (the file name)
+        // only matched while the upload was still in flight.
+        await expect(page.locator('#Form_EditForm_CookieImage_Holder')).toContainText(/ckb.test/);
         await save(page);
 
         const context = await browser.newContext({ baseURL, storageState: { cookies: [], origins: [] } });
