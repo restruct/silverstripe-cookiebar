@@ -138,7 +138,9 @@ test('an image uploaded in Settings shows in the bar for visitors (#5)', async (
         const img = visitor.locator('body > #cookiebar img');
         await expect(img).toHaveCount(1);
         // SetHeight(80) in the template.
-        await expect(img).toHaveAttribute('height', '80');
+        // Now ScaleMaxHeight(80) (owner decision 2026-10-08: never enlarge), so the 8x8 test image
+        // keeps its own 8px height; the 80px cap is covered by the unit test.
+        await expect(img).toHaveAttribute('height', '8');
         await expect.poll(() => img.evaluate((i) => (i as HTMLImageElement).naturalWidth)).toBeGreaterThan(0);
         expect(images.every((s) => s === 200), `image responses ${images}`).toBe(true);
         await context.close();

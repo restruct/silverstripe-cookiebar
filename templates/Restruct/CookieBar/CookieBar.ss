@@ -5,8 +5,9 @@
 		    <div class="cookiebar-row row pt-2 pb-2">
                 <div class="cookiebar-notification col-md col-lg-7 offset-lg-1">
                     <div class="notification-inner typography">
+                        <%-- ScaleMaxHeight, not SetHeight: SetHeight() is SS3 and renders nothing on SS4+ (#5); Max so a small image is never enlarged --%>
                         <% if $CookieImage %>
-                            $CookieImage.ScaleHeight(80)
+                            $CookieImage.ScaleMaxHeight(80)
                         <% end_if %>
                         <div class="notification-title">
                             $CookieBarTitle

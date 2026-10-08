@@ -15,7 +15,8 @@ Silverstripe 6. Both require Silverstripe `^5 || ^6`.
     settings once more, or publish it in *Files*.
   - The template called `$CookieImage.SetHeight(80)`, a Silverstripe 3 method that does not exist
     on Silverstripe 4+ images, so the bar rendered no `<img>` even for a published image. It now calls
-    `ScaleHeight(80)`. If you override `CookieBar.ss`, make the same change in your copy.
+    `ScaleMaxHeight(80)`: an image taller than 80px is scaled down, a smaller one keeps its own size
+    (never enlarged). If you override `CookieBar.ss`, make the same change in your copy.
 - **`CookieBar.js` threw `Cannot read properties of null (reading 'innerHTML')`** (#6) on every page
   whose template does not output `$CookieBar` (the script is added on every page while the bar is
   enabled). It now does nothing on such a page.

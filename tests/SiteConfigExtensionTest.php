@@ -175,14 +175,26 @@ class SiteConfigExtensionTest extends SapphireTest
     /**
      * #5, second cause: the template called $CookieImage.SetHeight(80), an SS3 method that does not
      * exist on SS4+ Image. A template swallows the missing method, so the bar rendered no <img> even
-     * for a published image.
+     * for a published image. It now uses ScaleMaxHeight(80): a tall image is capped at 80px, a small
+     * one keeps its own size (never enlarged).
      */
-    public function testCookieImageRendersInTheBar()
+    public function testCookieImageRendersInTheBarCappedAt80px()
+    {
+        $this->assertSame(80, $this->renderedImageHeight(self::TALL_PNG), 'a 2x200 image is scaled down to 80px');
+    }
+
+    public function testSmallCookieImageIsNotEnlarged()
+    {
+        $this->assertSame(1, $this->renderedImageHeight(self::TINY_PNG), 'a 1x1 image keeps its size');
+    }
+
+    /** Render $CookieBar with the given PNG as CookieImage; the height attribute of its <img> */
+    private function renderedImageHeight(string $base64Png): int
     {
         TestAssetStore::activate('CookieBarTest');
         try {
             $image = Image::create();
-            $image->setFromString(base64_decode(self::TINY_PNG), 'ckb-test.png');
+            $image->setFromString(base64_decode($base64Png), 'ckb-test.png');
             $image->write();
 
             $config = SiteConfig::current_site_config();
@@ -192,11 +204,17 @@ class SiteConfigExtensionTest extends SapphireTest
 
             $html = (string) ContentController::create()->CookieBar();
 
-            $this->assertMatchesRegularExpression('#<img[^>]+height="80"#', $html, 'the bar must show the image, 80px high');
+            $this->assertMatchesRegularExpression('#<img[^>]+height="(\d+)"#', $html, 'the bar must show the image');
+            preg_match('#<img[^>]+height="(\d+)"#', $html, $m);
+
+            return (int) $m[1];
         } finally {
             TestAssetStore::reset();
         }
     }
+
+    /** 2x200 red PNG */
+    private const TALL_PNG = 'iVBORw0KGgoAAAANSUhEUgAAAAIAAADICAIAAABNp6ehAAAAGUlEQVR42mP4z8AARAyj1Cg1So1SoxR9KABOFY6A0na6VAAAAABJRU5ErkJggg==';
 
     /** 1x1 transparent PNG */
     private const TINY_PNG = 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==';
