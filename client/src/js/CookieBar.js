@@ -14,6 +14,11 @@ document.addEventListener("DOMContentLoaded", function(event) {
   let cookieAcceptTemplate = document.getElementById('cookiebar-template');
   if(!cookieAcceptTemplate) cookieAcceptTemplate = document.querySelector('#cookiebarholder');
   if (typeof cookiesAccepted === 'undefined' || cookiesAccepted === null) {
+    // This script is added on every ContentController page, but the markup only exists where the
+    // template outputs $CookieBar; on a page without it there is no bar to show, so stop here
+    // instead of throwing on cookieAcceptTemplate.innerHTML (#6)
+    if (!cookieAcceptTemplate) return;
+
     document.querySelector('body')
       // https://developer.mozilla.org/en-US/docs/Web/API/Element/insertAdjacentHTML
       .insertAdjacentHTML('afterbegin', cookieAcceptTemplate.innerHTML);
