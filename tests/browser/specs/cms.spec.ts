@@ -109,7 +109,7 @@ test('a saved title shows on the front end; the dev/test switch and the master s
     expect(restored.title?.trim()).toBe(SEEDED_TITLE);
 });
 
-test.fixme('an image uploaded in Settings shows in the bar for visitors (#5)', async ({ page, browser, baseURL }) => {
+test('an image uploaded in Settings shows in the bar for visitors (#5)', async ({ page, browser, baseURL }) => {
     // https://github.com/restruct/silverstripe-cookiebar/issues/5 - the image stays in draft (no
     // $owns, and SiteConfig is not versioned), so a logged-out visitor's bar has no <img>.
     // Measured red at toHaveCount(1) on SS5 and SS6 (2026-10-02). On SS6 the admin itself also
@@ -118,9 +118,16 @@ test.fixme('an image uploaded in Settings shows in the bar for visitors (#5)', a
     test.setTimeout(60_000);
     await openCookieBarTab(page);
     try {
+        // The field shows the file name as soon as the upload starts, before the server has
+        // returned the new File ID; saving then posts CookieImage = 0 (measured 2026-10-08: the
+        // settings were written with CookieImageID 0). So wait for the field's own upload POST.
+        const uploaded = page.waitForResponse((r) => r.request().method() === 'POST' && /\/field\/CookieImage\/upload/.test(r.url()));
         // The React UploadField's dropzone input.
         await page.locator('input.dz-input-CookieImage').setInputFiles({ name: 'ckb-test.png', mimeType: 'image/png', buffer: tinyPng() });
-        await expect(page.locator('#Form_EditForm_CookieImage_Holder')).toContainText('ckb-test');
+        expect((await uploaded).status()).toBe(200);
+        // Once uploaded the field shows the server's Title, "ckb test"; "ckb-test" (the file name)
+        // only matched while the upload was still in flight.
+        await expect(page.locator('#Form_EditForm_CookieImage_Holder')).toContainText(/ckb.test/);
         await save(page);
 
         const context = await browser.newContext({ baseURL, storageState: { cookies: [], origins: [] } });
@@ -131,7 +138,9 @@ test.fixme('an image uploaded in Settings shows in the bar for visitors (#5)', a
         const img = visitor.locator('body > #cookiebar img');
         await expect(img).toHaveCount(1);
         // SetHeight(80) in the template.
-        await expect(img).toHaveAttribute('height', '80');
+        // Now ScaleMaxHeight(80) (owner decision 2026-10-08: never enlarge), so the 8x8 test image
+        // keeps its own 8px height; the 80px cap is covered by the unit test.
+        await expect(img).toHaveAttribute('height', '8');
         await expect.poll(() => img.evaluate((i) => (i as HTMLImageElement).naturalWidth)).toBeGreaterThan(0);
         expect(images.every((s) => s === 200), `image responses ${images}`).toBe(true);
         await context.close();

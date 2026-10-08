@@ -112,7 +112,7 @@ test('an AJAX request to /cookiebar/accept answers "success" and sets the cookie
     expect(await consentCookie(page), 'set server side').toBeDefined();
 });
 
-test.fixme('a page without $CookieBar in its template logs no error (#6)', async ({ page }) => {
+test('a page without $CookieBar in its template logs no error (#6)', async ({ page }) => {
     // https://github.com/restruct/silverstripe-cookiebar/issues/6 - the bar's JS is added on every
     // page, and on one without the markup it throws "Cannot read properties of null (reading
     // 'innerHTML')". The host's stock home page renders through the CMS fallback template, which

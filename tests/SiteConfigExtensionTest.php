@@ -4,7 +4,9 @@ namespace Restruct\CookieBar\Tests;
 
 use Restruct\CookieBar\Extensions\SiteConfigExtension;
 use SilverStripe\AssetAdmin\Forms\UploadField;
+use SilverStripe\Assets\Dev\TestAssetStore;
 use SilverStripe\Assets\Image;
+use SilverStripe\CMS\Controllers\ContentController;
 use SilverStripe\CMS\Model\SiteTree;
 use SilverStripe\Dev\SapphireTest;
 use SilverStripe\Forms\CheckboxField;
@@ -15,6 +17,7 @@ use SilverStripe\Forms\TreeDropdownField;
 use SilverStripe\ORM\DataObject;
 use SilverStripe\ORM\DB;
 use SilverStripe\SiteConfig\SiteConfig;
+use SilverStripe\SiteConfig\SiteConfigLeftAndMain;
 
 /**
  * The SiteConfig extension: that it applies, what schema it builds, the defaults, the CMS fields it
@@ -135,6 +138,86 @@ class SiteConfigExtensionTest extends SapphireTest
 
         $this->assertSame('<script>window.dataLayer = [];bold</script>', $html);
     }
+
+    /**
+     * #5: an image uploaded into Settings > Cookie bar stayed in draft, so visitors saw no image.
+     * SiteConfig is not versioned; on save the CMS publishes it recursively (versioned's
+     * RecursivePublishableHandler::onAfterSave on LeftAndMain, which LeftAndMain::save() fires on
+     * SS6; SS5's save_siteconfig calls publishRecursive() itself). That only reaches the image when
+     * SiteConfig owns it.
+     */
+    public function testCookieImageIsPublishedWhenTheSettingsAreSaved()
+    {
+        TestAssetStore::activate('CookieBarTest');
+        try {
+            $image = Image::create();
+            $image->setFromString(base64_decode(self::TINY_PNG), 'ckb-test.png');
+            # A fresh upload is a draft-only file, as the UploadField leaves it
+            $image->write();
+            $this->assertFalse($image->isPublished(), 'precondition: the upload starts in draft');
+
+            $config = SiteConfig::current_site_config();
+            $config->CookieImageID = $image->ID;
+            $config->write();
+            # The CMS save hook, as LeftAndMain::save() fires it
+            SiteConfigLeftAndMain::singleton()->extend('onAfterSave', $config);
+
+            $this->assertTrue(
+                Image::get()->byID($image->ID)->isPublished(),
+                'the cookie bar image must be published together with the settings'
+            );
+            $this->assertContains('CookieImage', (array)SiteConfig::config()->get('owns'));
+        } finally {
+            TestAssetStore::reset();
+        }
+    }
+
+    /**
+     * #5, second cause: the template called $CookieImage.SetHeight(80), an SS3 method that does not
+     * exist on SS4+ Image. A template swallows the missing method, so the bar rendered no <img> even
+     * for a published image. It now uses ScaleMaxHeight(80): a tall image is capped at 80px, a small
+     * one keeps its own size (never enlarged).
+     */
+    public function testCookieImageRendersInTheBarCappedAt80px()
+    {
+        $this->assertSame(80, $this->renderedImageHeight(self::TALL_PNG), 'a 2x200 image is scaled down to 80px');
+    }
+
+    public function testSmallCookieImageIsNotEnlarged()
+    {
+        $this->assertSame(1, $this->renderedImageHeight(self::TINY_PNG), 'a 1x1 image keeps its size');
+    }
+
+    /** Render $CookieBar with the given PNG as CookieImage; the height attribute of its <img> */
+    private function renderedImageHeight(string $base64Png): int
+    {
+        TestAssetStore::activate('CookieBarTest');
+        try {
+            $image = Image::create();
+            $image->setFromString(base64_decode($base64Png), 'ckb-test.png');
+            $image->write();
+
+            $config = SiteConfig::current_site_config();
+            $config->CookieBarEnable = true;
+            $config->CookieImageID = $image->ID;
+            $config->write();
+
+            $html = (string) ContentController::create()->CookieBar();
+
+            $this->assertMatchesRegularExpression('#<img[^>]+height="(\d+)"#', $html, 'the bar must show the image');
+            preg_match('#<img[^>]+height="(\d+)"#', $html, $m);
+
+            return (int) $m[1];
+        } finally {
+            TestAssetStore::reset();
+        }
+    }
+
+    /** 2x200 red PNG */
+    private const TALL_PNG = 'iVBORw0KGgoAAAANSUhEUgAAAAIAAADICAIAAABNp6ehAAAAGUlEQVR42mP4z8AARAyj1Cg1So1SoxR9KABOFY6A0na6VAAAAABJRU5ErkJggg==';
+
+    /** 1x1 transparent PNG */
+    private const TINY_PNG = 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==';
 
     private function siteConfigTable(): string
     {

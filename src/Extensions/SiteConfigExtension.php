@@ -45,6 +45,17 @@ namespace Restruct\CookieBar\Extensions {
         ];
 
         /**
+         * SiteConfig is not versioned, but the CMS publishes it recursively on save (SS5
+         * save_siteconfig, SS6 versioned's RecursivePublishableHandler). Owning the image is what
+         * makes that publish reach it; without this an uploaded image stayed in draft and visitors
+         * saw a bar without it (#5).
+         * @var array
+         */
+        private static $owns = [
+            'CookieImage',
+        ];
+
+        /**
          * @var array
          */
         private static $defaults = [
