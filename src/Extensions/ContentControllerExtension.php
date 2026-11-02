@@ -51,11 +51,18 @@ namespace Restruct\CookieBar\Extensions {
             }
 
             if (self::cookieBarEnabled() && !self::CookieConsent()) {
+                # The bar's own look (background, borders, bold title, image offset) is in
+                # cookiebar.css, so it always loads; sans_bs_css only ADDS the layout Bootstrap would
+                # otherwise give (columns, buttons). It used to replace cookiebar.css (#9).
+                Requirements::css('restruct/silverstripe-cookiebar:client/dist/css/cookiebar.css');
                 if (CookieBarController::config()->get('sans_bs_css')) {
                     Requirements::css('restruct/silverstripe-cookiebar:client/dist/css/cookiebar-layout-sans-bs.css'); // non-bootstrap fallback layout (columns)
-                } else {
-                    Requirements::css('restruct/silverstripe-cookiebar:client/dist/css/cookiebar.css');
                 }
+//                if (CookieBarController::config()->get('sans_bs_css')) {
+//                    Requirements::css('restruct/silverstripe-cookiebar:client/dist/css/cookiebar-layout-sans-bs.css'); // non-bootstrap fallback layout (columns)
+//                } else {
+//                    Requirements::css('restruct/silverstripe-cookiebar:client/dist/css/cookiebar.css');
+//                }
 
 //                Requirements::javascript('restruct/silverstripe-cookiebar:client/dist/js/CookieBar.js');
                 Requirements::javascriptTemplate('restruct/silverstripe-cookiebar:client/dist/js/CookieBar.js',

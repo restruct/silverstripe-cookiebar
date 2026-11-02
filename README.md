@@ -127,7 +127,7 @@ closing body tag:
 visitors without JavaScript stays where `$CookieBar` is placed.
 
 The included template uses Bootstrap classes for its layout. In case the site theme does not use
-Bootstrap, a 'sans-bs' CSS file can be included instead which provides a fallback layout (see
+Bootstrap, a 'sans-bs' CSS file can be added which provides a fallback layout (see
 [Configuration](#configuration)).
 
 The module applies its extensions itself (to `SiteTree`, `ContentController` and `SiteConfig`); run
@@ -145,9 +145,10 @@ Restruct\CookieBar\Controls\CookieBarController:
   cookie_refresh: true # refresh consent cookie upon each request
 ```
 
-`sans_bs_css: true` loads `cookiebar-layout-sans-bs.css` (columns and buttons) in place of
-`cookiebar.css`, not next to it, so the bar's background, borders, bold title and image offset from
-`cookiebar.css` are then not applied
+`sans_bs_css: true` adds `cookiebar-layout-sans-bs.css` (columns and buttons, what Bootstrap would
+otherwise provide) on top of `cookiebar.css`, which always loads and holds the bar's own styling:
+background, borders, bold title and image offset. Before 2.4.0 / 3.2.0 the layout file replaced
+`cookiebar.css` and the bar lost that styling
 ([#9](https://github.com/restruct/silverstripe-cookiebar/issues/9)).
 
 A cookie named `Restruct_CookiesAccepted`, set by older versions of this module, is still accepted as
