@@ -111,6 +111,22 @@ class SiteConfigExtensionTest extends SapphireTest
         );
     }
 
+    /**
+     * #10: the content label claimed "(hidden on mobile)", but neither the template nor the CSS hides
+     * it; and the default text read "we uses cookies".
+     */
+    public function testCmsCopyMakesNoFalseClaimAndHasNoTypo()
+    {
+        $fields = SiteConfig::current_site_config()->getCMSFields();
+        $label = $fields->dataFieldByName('CookieBarContent')->Title();
+        $this->assertStringNotContainsStringIgnoringCase('mobile', $label);
+        $this->assertSame('Cookie bar Content', $label);
+
+        $content = SiteConfig::create()->CookieBarContent;
+        $this->assertStringNotContainsString('we uses', $content);
+        $this->assertStringContainsString('Like most websites we use cookies', $content);
+    }
+
     public function testCmsFieldsRender()
     {
         $fields = SiteConfig::current_site_config()->getCMSFields();
