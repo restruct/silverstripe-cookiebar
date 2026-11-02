@@ -73,7 +73,8 @@ class SiteConfigExtensionTest extends SapphireTest
 
         $this->assertSame('Accept', $config->CookieCloseText);
         $this->assertSame('Read more about Cookies', $config->CookieMoreText);
-        $this->assertStringContainsString('Like most websites we uses cookies', $config->CookieBarContent);
+        # The typo 'we uses' was fixed on purpose (#10, approved by mic).
+        $this->assertStringContainsString('Like most websites we use cookies', $config->CookieBarContent);
         $this->assertEmpty($config->CookieBarEnable, 'The bar must be off until an editor enables it.');
     }
 
