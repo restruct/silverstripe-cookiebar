@@ -1,5 +1,41 @@
 # Changelog
 
+## 2.4.0 / 3.2.0 (2026-11-02)
+
+Same code for both tags, as before: 2.4.0 for Silverstripe 5 projects constrained to `^2`, 3.2.0 for
+Silverstripe 6. Both require Silverstripe `^5 || ^6`. A minor release, not a patch, because sites
+with `sans_bs_css: true` now load one more stylesheet and their bar changes look.
+
+### Changed
+
+- **`sans_bs_css: true` adds the layout stylesheet on top of `cookiebar.css` instead of replacing it**
+  (#9). `cookiebar-layout-sans-bs.css` only supplies what Bootstrap would (columns, buttons); the
+  bar's own styling (grey background, top and bottom borders, bold title, the offset that puts the
+  optional image beside the text) is only in `cookiebar.css`, so with the option on the bar rendered
+  unstyled. A site with `sans_bs_css: true` now gets that styling: check the bar if your theme styled
+  it around the missing `cookiebar.css`. Projects that `Requirements::block()` `cookiebar.css` are
+  unaffected.
+
+### Fixed
+
+- **CMS copy** (#10): the *Cookie bar Content* label no longer claims the content is "hidden on
+  mobile" (nothing in the module hides it; a theme still can), and the default content reads "Like
+  most websites we use cookies" instead of "we uses cookies". The default only applies to a new
+  `SiteConfig`; an existing site keeps its stored text, so fix the typo there in *Settings > Cookie
+  bar* if it shows.
+
+### Added
+
+- `composer.json` `suggest`s `silverstripe/htmleditor-tinymce`: on Silverstripe 6 the *Cookie bar
+  Content* field is a WYSIWYG editor only with that module installed (README "Requirements").
+
+### Tests
+
+- The Silverstripe 6 browser spec for the image upload no longer fails intermittently (#8). It saved
+  inside the admin change tracker's 250ms debounce after the upload, and the deferred re-read then
+  ran on the replaced form (`Cannot read properties of null (reading 'prepValueForChangeTracker')`).
+  Test-only change: the spec now waits for the tracker before saving.
+
 ## 2.3.3 / 3.1.2 (2026-10-08)
 
 Same code for both tags, as before: 2.3.3 for Silverstripe 5 projects constrained to `^2`, 3.1.2 for

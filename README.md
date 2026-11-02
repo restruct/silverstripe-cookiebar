@@ -89,13 +89,14 @@ is ticked, and nothing on the `Security` controller.
   the project's own `PageController`, which every standard CMS project has
 * On Silverstripe 6, the *Cookie bar Content* field is a WYSIWYG editor only when the project has
   `silverstripe/htmleditor-tinymce` installed (TinyMCE is a separate module there); without it the
-  field is a plain textarea that takes HTML
+  field is a plain textarea that takes HTML. It is listed under `suggest` in `composer.json`; add it
+  with `composer require silverstripe/htmleditor-tinymce`
 
 ## Version compatibility
 
 | Branch | Module version | Silverstripe | PHP |
 |--------|----------------|--------------|-----|
-| `main` | `2.3.1` - `2.3.3` and `3.1.0` - `3.1.2` (tagged in pairs, same code) | `^5 \|\| ^6` | `^8.1` |
+| `main` | `2.3.1` - `2.4.0` and `3.1.0` - `3.2.0` (tagged in pairs, same code) | `^5 \|\| ^6` | `^8.1` |
 | (tags only) | `2.3.0` | `^5 \|\| ^6` | not declared; broken on Silverstripe 6, upgrade to the latest pair |
 | (tags only) | `3.0.0`, `3.0.1` | `^6` | not declared (Silverstripe 6: 8.3+); superseded by `3.1.x` |
 | (tags only) | `2.2.3`, `2.2.4` | `^4 \|\| ^5` | not declared (follows Silverstripe) |
@@ -105,8 +106,9 @@ Silverstripe 4 reached end of life in April 2025 and is no longer supported or t
 still on it should stay on the `2.2.x` tags, which remain available.
 
 `main` is the only maintained line and supports Silverstripe 5 and 6 from one codebase. Each release
-is tagged twice with identical code: `2.3.x` for projects constrained to `^2`, and `3.1.x` so that
-Silverstripe 6 projects on `^3` receive the same fixes (currently `2.3.3` and `3.1.2`). The older
+is tagged twice with identical code: a `2.x` tag for projects constrained to `^2`, and a `3.x` tag
+(from `3.1.0`) so that Silverstripe 6 projects on `^3` receive the same fixes (currently `2.4.0` and
+`3.2.0`). The older
 `3.0.0` and `3.0.1` tags (Silverstripe 6 only) predate this line and are superseded by `3.1.x`; see
 [CHANGELOG.md](CHANGELOG.md).
 
