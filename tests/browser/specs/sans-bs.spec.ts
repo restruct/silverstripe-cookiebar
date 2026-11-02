@@ -29,3 +29,19 @@ test('sans_bs_css loads the layout stylesheet instead of cookiebar.css, and lays
     expect(seen).toEqual(['200 cookiebar-layout-sans-bs']);
     await expect(bar(page).locator('.cookiebar-row').first()).toHaveCSS('display', 'flex');
 });
+
+test('with sans_bs_css the bar keeps its own styling: background, borders, bold title, image offset (#9)', async ({ page, context, baseURL }) => {
+    // https://github.com/restruct/silverstripe-cookiebar/issues/9 - the layout stylesheet only stands
+    // in for Bootstrap (columns, buttons); the bar's own look lives in cookiebar.css
+    // (client/src/sass/cookiebar.scss). Both must apply when sans_bs_css is on.
+    await context.addCookies([{ name: 'ckb-browser-variant', value: 'sans-bs', url: baseURL! }]);
+    await page.goto(HOME);
+    await expect(bar(page)).toBeVisible();
+    // Values from cookiebar.scss.
+    await expect(bar(page)).toHaveCSS('background-color', 'rgb(238, 238, 238)');
+    await expect(bar(page)).toHaveCSS('border-top', '2px solid rgb(153, 153, 153)');
+    await expect(bar(page)).toHaveCSS('border-bottom', '2px solid rgb(153, 153, 153)');
+    await expect(bar(page).locator('.notification-title')).toHaveCSS('font-weight', '700');
+    // The room the optional image is placed in, beside the text.
+    await expect(bar(page).locator('.notification-inner')).toHaveCSS('padding-left', '100px');
+});
