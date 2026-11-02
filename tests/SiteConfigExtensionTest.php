@@ -73,7 +73,8 @@ class SiteConfigExtensionTest extends SapphireTest
 
         $this->assertSame('Accept', $config->CookieCloseText);
         $this->assertSame('Read more about Cookies', $config->CookieMoreText);
-        $this->assertStringContainsString('Like most websites we uses cookies', $config->CookieBarContent);
+        # The typo 'we uses' was fixed on purpose (#10, approved by mic).
+        $this->assertStringContainsString('Like most websites we use cookies', $config->CookieBarContent);
         $this->assertEmpty($config->CookieBarEnable, 'The bar must be off until an editor enables it.');
     }
 
@@ -109,6 +110,22 @@ class SiteConfigExtensionTest extends SapphireTest
             ['jpg', 'jpeg', 'gif', 'png'],
             $tab->fieldByName('CookieImage')->getValidator()->getAllowedExtensions()
         );
+    }
+
+    /**
+     * #10: the content label claimed "(hidden on mobile)", but neither the template nor the CSS hides
+     * it; and the default text read "we uses cookies".
+     */
+    public function testCmsCopyMakesNoFalseClaimAndHasNoTypo()
+    {
+        $fields = SiteConfig::current_site_config()->getCMSFields();
+        $label = $fields->dataFieldByName('CookieBarContent')->Title();
+        $this->assertStringNotContainsStringIgnoringCase('mobile', $label);
+        $this->assertSame('Cookie bar Content', $label);
+
+        $content = SiteConfig::create()->CookieBarContent;
+        $this->assertStringNotContainsString('we uses', $content);
+        $this->assertStringContainsString('Like most websites we use cookies', $content);
     }
 
     public function testCmsFieldsRender()

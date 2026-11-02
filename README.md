@@ -38,7 +38,7 @@ The bar is switched on and edited per site in the CMS, under *Settings > Cookie 
 | Accept/Close Link Text | Text on the accept button. Default `Accept`. |
 | More Information Link Text | Text on the link to the information page. Default `Read more about Cookies`. |
 | Cookie Information Page | Page the information link points at; the link is hidden when empty. |
-| Cookie bar Content | Body text, HTML. A default text is provided. (The CMS label says "hidden on mobile", but the module's template and CSS do not hide it, see [#10](https://github.com/restruct/silverstripe-cookiebar/issues/10); a theme can.) |
+| Cookie bar Content | Body text, HTML. A default text is provided. Shown on every screen size: the module does not hide it on mobile (a theme can). |
 | Image (optional) | jpg, jpeg, gif or png. Shown at most 80px high: a taller image is scaled down, a smaller one keeps its size. It is published when the settings are saved. |
 | Optional RAW JS code to run on page initialisation | See [Scripts before and after consent](#scripts-before-and-after-consent). |
 | Optional RAW JS code to run if/after consent | See [Scripts before and after consent](#scripts-before-and-after-consent). |

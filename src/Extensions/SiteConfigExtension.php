@@ -61,7 +61,7 @@ namespace Restruct\CookieBar\Extensions {
         private static $defaults = [
             'CookieCloseText'  => 'Accept',
             'CookieMoreText'   => 'Read more about Cookies',
-            'CookieBarContent' => '<p><strong>Like most websites we uses cookies</strong>. In order to deliver a personalised, responsive service and to improve the site, we remember and store information about how you use it. This is done using simple text files called cookies which sit on your computer. These cookies are completely safe and secure and will never contain any sensitive information. They are used only by us.</p>',
+            'CookieBarContent' => '<p><strong>Like most websites we use cookies</strong>. In order to deliver a personalised, responsive service and to improve the site, we remember and store information about how you use it. This is done using simple text files called cookies which sit on your computer. These cookies are completely safe and secure and will never contain any sensitive information. They are used only by us.</p>',
         ];
 
         /**
@@ -92,7 +92,9 @@ namespace Restruct\CookieBar\Extensions {
                 TextField::create('CookieCloseText', 'Accept/Close Link Text'),
                 TextField::create('CookieMoreText', 'More Information Link Text'),
                 TreeDropdownField::create('CookiePageID', 'Cookie Information Page', SiteTree::class),
-                HTMLEditorField::create('CookieBarContent', 'Cookie bar Content (hidden on mobile)')->setRows(5),
+                # No "(hidden on mobile)" any more: nothing in the module hides the content (#10).
+//                HTMLEditorField::create('CookieBarContent', 'Cookie bar Content (hidden on mobile)')->setRows(5),
+                HTMLEditorField::create('CookieBarContent', 'Cookie bar Content')->setRows(5),
                 $imageField,
                 TextareaField::create('CookieBarRunOnInit', 'Optional RAW JS code to run on page initialisation (before any other scripts)')
                     ->setDescription('Javascript to always run on initialization/loading of page, eg for setting default consent mode and update it on consent (see placeholder content).<br>Please make sure to enter valid javascript only (any HTML tags get filtered out as a basic safety precaution).<br>NOTE: requires your templates to call $MetaTags() to include this script, alternatively you may place the script manually by adding $SiteConfig.CookieBarRunOnInitScript in the head section.')
