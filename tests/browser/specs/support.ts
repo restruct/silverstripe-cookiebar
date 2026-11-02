@@ -79,3 +79,81 @@ export function watchDocumentNavigations(page: Page): () => string[] {
     });
     return () => [...seen];
 }
+
+// --- CMS change tracker (issue #8) ---------------------------------------------------------------
+//
+// Why the SS6 settings spec threw "Cannot read properties of null (reading
+// 'prepValueForChangeTracker')" now and then: silverstripe/admin's changetracker (SS6 / admin 3)
+// re-reads every field of the edit form on each change event that reaches the form, through a lodash
+// debounce of 250ms with leading AND trailing calls, one debounce per event target. For an HTML
+// editor field (CookieBarContent) that read is textarea.entwine('ss').getEditor()
+// .prepValueForChangeTracker(). The UploadField fires a change on the form when the file is added and
+// again when the upload returns; when those two land within 250ms, the second re-read is deferred to
+// the debounce's trailing edge. A save inside that window whose response replaces the form first
+// leaves the deferred re-read running against the removed form, where entwine has already dropped the
+// textarea's Editor: getEditor() is null. A person never saves that fast; a spec does. SS5's
+// changetracker never calls prepValueForChangeTracker, so it cannot throw this.
+//
+// The probe below makes that deferred re-read observable, so a spec can wait for it instead of
+// sleeping: a change event on the edit form marks the tracker "pending", the tracker's own re-read of
+// the HTML editor field clears it again (at once for a leading call, after 250ms for a trailing one).
+
+/**
+ * Install the change-tracker probe on the CMS page that is open now. Call it after every full page
+ * load of an edit form (the probe lives in the page). A no-op where the changetracker never reads the
+ * editor (SS5), so changeTrackerSettled() then returns at once.
+ */
+export async function probeChangeTracker(page: Page): Promise<void> {
+    await page.evaluate(() => {
+        const w = window as any;
+        const $ = w.jQuery;
+        if (w.__ckbProbe || !$?.fn?.changetracker || !w.ss?.editorWrappers) return;
+        if (!String($.fn.changetracker).includes('prepValueForChangeTracker')) return;
+        const probe = (w.__ckbProbe = { pending: false });
+        // Wrap one editor instance: its prepValueForChangeTracker is the changetracker's re-read.
+        const wrap = (editor: any) => {
+            if (editor && !editor.__ckbProbed) {
+                const read = editor.prepValueForChangeTracker;
+                editor.prepValueForChangeTracker = function (value: unknown) {
+                    probe.pending = false;
+                    return read.call(this, value);
+                };
+                editor.__ckbProbed = true;
+            }
+            return editor;
+        };
+        // Editors created from now on: a save re-renders the form and builds new ones.
+        for (const key of Object.keys(w.ss.editorWrappers)) {
+            const make = w.ss.editorWrappers[key];
+            w.ss.editorWrappers[key] = function (...args: unknown[]) {
+                return wrap(make.apply(this, args));
+            };
+        }
+        // The editors already on the page.
+        $('textarea.htmleditor').each(function (this: HTMLElement) {
+            wrap($(this).entwine('ss').getEditor());
+        });
+        // preDispatch runs before the form's own change handlers, so a leading re-read (same
+        // dispatch) clears the flag again before the dispatch ends. Native and triggered events alike.
+        const special = ($.event.special.change ||= {});
+        const before = special.preDispatch;
+        special.preDispatch = function (this: HTMLElement, event: unknown) {
+            if (this.id === 'Form_EditForm') probe.pending = true;
+            return before ? before.call(this, event) : undefined;
+        };
+    });
+}
+
+/**
+ * Wait until the changetracker has re-read the form after its last change event, i.e. no deferred
+ * (trailing) re-read is left that a save could orphan. Needs probeChangeTracker() on this page load.
+ * Caveat: a change event on the HTML editor textarea itself also clears the flag early (the per-field
+ * handler reads that one field); no spec here edits that field.
+ */
+export async function changeTrackerSettled(page: Page): Promise<void> {
+    await expect
+        .poll(() => page.evaluate(() => (window as any).__ckbProbe?.pending ?? false), {
+            message: 'the CMS changetracker has re-read the form after its last change event (#8)',
+        })
+        .toBe(false);
+}

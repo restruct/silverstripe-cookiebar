@@ -1,4 +1,4 @@
-import { test, expect, barAssets, trace, HOME } from './support';
+import { test, expect, barAssets, trace, HOME, probeChangeTracker, changeTrackerSettled } from './support';
 import type { Browser, Page } from '@playwright/test';
 import { deflateSync } from 'node:zlib';
 
@@ -13,10 +13,15 @@ async function openCookieBarTab(page: Page): Promise<void> {
     // Root.CookieBar, which the CMS titles "Cookie bar".
     await page.locator('a[href$="#Root_CookieBar"]').click();
     await expect(page.locator('#Form_EditForm_CookieBarTitle')).toBeVisible();
+    // Every goto is a fresh page, so the probe goes in again (#8, support.ts).
+    await probeChangeTracker(page);
 }
 
 /** Save the settings form and wait for its AJAX POST to come back 200. */
 async function save(page: Page): Promise<void> {
+    // Never save while the changetracker still owes the form a deferred re-read: the save's
+    // response replaces the form and that re-read then throws in the admin JS (#8, support.ts).
+    await changeTrackerSettled(page);
     const posted = page.waitForResponse((r) => r.request().method() === 'POST' && /\/admin\/settings\/EditForm/.test(r.url()));
     // The SiteConfig save action is "save_siteconfig" on SS5 and "save" on SS6.
     await page.locator('#Form_EditForm_action_save_siteconfig, #Form_EditForm_action_save').click();
@@ -115,6 +120,8 @@ test('an image uploaded in Settings shows in the bar for visitors (#5)', async (
     // Measured red at toHaveCount(1) on SS5 and SS6 (2026-10-02). On SS6 the admin itself also
     // logged "Cannot read properties of null (reading 'prepValueForChangeTracker')" during that run
     // (upload/remove in the settings form); check that again when this spec is switched on.
+    // That error was a test-side race in the end (#8): saving inside the admin changetracker's
+    // debounce after the upload. save() now waits for the tracker first; see support.ts.
     test.setTimeout(60_000);
     await openCookieBarTab(page);
     try {
@@ -128,6 +135,9 @@ test('an image uploaded in Settings shows in the bar for visitors (#5)', async (
         // Once uploaded the field shows the server's Title, "ckb test"; "ckb-test" (the file name)
         // only matched while the upload was still in flight.
         await expect(page.locator('#Form_EditForm_CookieImage_Holder')).toContainText(/ckb.test/);
+        // The UploadField's change has reached the changetracker (it marks the form changed); save()
+        // then also waits for the tracker's deferred re-read (#8).
+        await expect(page.locator('#Form_EditForm')).toHaveClass(/\bchanged\b/);
         await save(page);
 
         const context = await browser.newContext({ baseURL, storageState: { cookies: [], origins: [] } });
@@ -150,6 +160,9 @@ test('an image uploaded in Settings shows in the bar for visitors (#5)', async (
         const remove = page.locator('#Form_EditForm_CookieImage_Holder').getByRole('button', { name: /remove/i });
         if (await remove.count()) {
             await remove.first().click();
+            // Same as after the upload: the removal has reached the changetracker before saving (#8).
+            await expect(remove).toHaveCount(0);
+            await expect(page.locator('#Form_EditForm')).toHaveClass(/\bchanged\b/);
             await save(page);
         }
     }
