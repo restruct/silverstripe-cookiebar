@@ -1,11 +1,17 @@
 {
   "name": "restruct/silverstripe-cookiebar",
-  "description": "Drop-in configurable notice about cookies",
+  "description": "Cookie notice bar set up in the CMS: your text, an Accept button, a link to your cookie page, and scripts that run before and after consent (eg Google Consent Mode)",
   "type": "silverstripe-vendormodule",
   "license": "MIT",
   "keywords": [
     "silverstripe",
-    "cookies"
+    "silverstripe-module",
+    "silverstripe-cms",
+    "cookies",
+    "cookie-banner",
+    "cookie-consent",
+    "consent-mode",
+    "gdpr"
   ],
   "authors": [
     {
