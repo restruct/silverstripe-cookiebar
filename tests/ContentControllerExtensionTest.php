@@ -110,15 +110,20 @@ class ContentControllerExtensionTest extends SapphireTest
         $this->assertMatchesRegularExpression('/=\s*12\b/', $script);
     }
 
-    public function testSansBootstrapCssOptionSwapsTheStylesheet()
+    /**
+     * sans_bs_css ADDS the layout stylesheet on top of cookiebar.css (#9): the bar's own styling
+     * is only in cookiebar.css. Until 2.4.0 / 3.2.0 the option replaced cookiebar.css.
+     */
+    public function testSansBootstrapCssOptionAddsTheLayoutStylesheet()
     {
         CookieBarController::config()->set('sans_bs_css', true);
 
         $this->runInit();
 
         $css = $this->cssFiles();
-        $this->assertCount(1, $css);
-        $this->assertStringEndsWith('client/dist/css/cookiebar-layout-sans-bs.css', $css[0]);
+        $this->assertCount(2, $css);
+        $this->assertStringEndsWith('client/dist/css/cookiebar.css', $css[0]);
+        $this->assertStringEndsWith('client/dist/css/cookiebar-layout-sans-bs.css', $css[1]);
     }
 
     public function testRunOnConsentScriptIsWrappedAndStripped()
