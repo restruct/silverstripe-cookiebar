@@ -1,6 +1,8 @@
 # Changelog
 
-## Unreleased
+## 2.5.1 / 3.3.1 (2026-11-17)
+
+Same code for both tags: 2.5.1 for Silverstripe 5 projects constrained to `^2`, 3.3.1 for Silverstripe 6.
 
 ### Security
 
