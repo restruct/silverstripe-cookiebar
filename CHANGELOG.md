@@ -1,6 +1,9 @@
 # Changelog
 
-## Unreleased
+## 2.5.0 / 3.3.0 (2026-11-17)
+
+Same code for both tags, as before: 2.5.0 for Silverstripe 5 projects constrained to `^2`, 3.3.0 for
+Silverstripe 6.
 
 ### Changed
 
