@@ -1,5 +1,16 @@
 # Changelog
 
+## Unreleased
+
+### Security
+
+- **js-cookie 2.2.1 to 3.0.8** in the bundled `CookieBar.js`, for
+  [GHSA-qjx8-664m-686j](https://github.com/advisories/GHSA-qjx8-664m-686j) (a prototype hijack in
+  js-cookie's attribute merging, fixed in 3.0.7). The module could not reach it: it passes a literal
+  attributes object, never `JSON.parse`d input. The consent cookie is written and read exactly as before
+  (same name encoding, value, `path=/` and expiry). `CookieBar.js` is smaller: js-cookie 3 is an ES
+  module, so the bundle no longer carries a CommonJS/UMD wrapper.
+
 ## 2.5.0 / 3.3.0 (2026-11-17)
 
 Same code for both tags, as before: 2.5.0 for Silverstripe 5 projects constrained to `^2`, 3.3.0 for
