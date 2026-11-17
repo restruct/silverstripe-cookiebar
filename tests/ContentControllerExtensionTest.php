@@ -106,7 +106,9 @@ class ContentControllerExtensionTest extends SapphireTest
         $this->runInit();
 
         $script = $this->allCustomScript();
-        $this->assertStringContainsString('"my_consent"', $script);
+        # The name must land as a whole JS string literal. Which quote the minifier writes is up to
+        # the build (webpack/terser: "...", Vite/Oxc: `...`), so any of the three is accepted.
+        $this->assertMatchesRegularExpression('/(["\'`])my_consent\1/', $script);
         $this->assertMatchesRegularExpression('/=\s*12\b/', $script);
     }
 
