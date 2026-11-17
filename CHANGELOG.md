@@ -1,5 +1,15 @@
 # Changelog
 
+## Unreleased
+
+### Changed
+
+- **Front-end build moved from laravel-mix (webpack) to Vite.** The output files keep their names and
+  paths and behave the same; their minified content differs (another minifier). js-cookie's licence
+  notice is now kept inside `CookieBar.js`, so `client/dist/js/CookieBar.js.LICENSE.txt` and the
+  unused `client/dist/mix-manifest.json` are gone. Only matters if you rebuild the assets: see README
+  "Building the front-end assets".
+
 ## 2.4.0 / 3.2.0 (2026-11-02)
 
 Same code for both tags, as before: 2.4.0 for Silverstripe 5 projects constrained to `^2`, 3.2.0 for

@@ -187,6 +187,23 @@ From PHP, static methods on `Restruct\CookieBar\Controls\CookieBarController`:
 And `Restruct\CookieBar\Extensions\ContentControllerExtension::cookieBarEnabled(): bool` for the
 current site's master switch.
 
+## Building the front-end assets
+
+The built files in `client/dist` are committed, so installing the module needs no Node tooling. To
+change the bar's script or styles, edit `client/src` and rebuild with [Vite](https://vite.dev)
+(Node `^20.19` or `>=22.12`):
+
+```bash
+yarn install
+yarn build    # minified, what gets committed
+yarn dev      # unminified, with inline source maps
+yarn watch    # as dev, rebuilding on every change
+```
+
+`build-assets.mjs` holds the build configuration. The output names (`client/dist/js/CookieBar.js`,
+`client/dist/css/cookiebar.css`, `client/dist/css/cookiebar-layout-sans-bs.css`) are fixed, because
+the PHP loads them by path. Commit `client/src` and `client/dist` together, built with `yarn build`.
+
 ## Running the tests
 
 The module cannot be tested on its own: it needs a host Silverstripe project (built from
