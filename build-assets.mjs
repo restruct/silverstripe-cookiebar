@@ -36,12 +36,6 @@ const parts = [
         // webpack bundle did. js-cookie is bundled in (it is not provided by the page).
         input: { 'CookieBar': 'client/src/js/CookieBar.js' },
         format: 'iife',
-        define: {
-            // js-cookie 2 is a UMD module: on a page with an AMD loader (RequireJS) it would call that
-            // page's define() and register itself there. webpack handled the AMD branch inside its own
-            // bundle; Rolldown leaves it live, so switch it off and the bundled copy stays private
-            'define.amd': 'false',
-        },
     },
 ];
 
