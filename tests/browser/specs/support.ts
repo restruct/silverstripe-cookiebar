@@ -61,8 +61,10 @@ export async function consentCookie(page: Page) {
 export async function barAssets(page: Page): Promise<{ css: number; js: number }> {
     return page.evaluate(() => ({
         css: document.querySelectorAll('link[href*="silverstripe-cookiebar/client/dist/css/cookiebar"]').length,
-        // javascriptTemplate() inlines CookieBar.js; its webpack licence banner identifies it.
-        js: [...document.scripts].filter((s) => (s.textContent ?? '').includes('CookieBar.js.LICENSE')).length,
+        // javascriptTemplate() inlines CookieBar.js; the template id it looks up identifies it.
+        // (It used to be webpack's "CookieBar.js.LICENSE" banner, which the Vite build has no more.)
+        // The x-template script that HAS that id does not contain the string in its own content.
+        js: [...document.scripts].filter((s) => (s.textContent ?? '').includes('cookiebar-template')).length,
     }));
 }
 
